@@ -31,10 +31,13 @@ class HabitacionesRepository {
 
     suspend fun uploadImage(image: MultipartBody.Part): Response<UploadResponse> {
         return api.uploadImage(image)
-
     }
 
     suspend fun editarHabitacion(id: String, habitacion: Habitacion) {
         api.editarHabitacion(id, habitacion)
+    }
+
+    suspend fun eliminarHabitacion(habitacionId: String) {
+        api.eliminarHabitacion(habitacionId)
     }
 }

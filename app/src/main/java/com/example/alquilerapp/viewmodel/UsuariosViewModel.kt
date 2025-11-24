@@ -5,12 +5,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.alquilerapp.data.model.RegistroRequest
 import com.example.alquilerapp.data.model.Usuario
+import com.example.alquilerapp.data.network.RetrofitClient
 import com.example.alquilerapp.repository.UsuarioRepository
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-class UsuariosViewModel(private val usuarioRepository: UsuarioRepository) : ViewModel() {
+class UsuariosViewModel(
+    private val usuarioRepository: UsuarioRepository
+) : ViewModel() {
 
     var usuarios by mutableStateOf<List<Usuario>>(emptyList())
         private set
@@ -43,23 +47,11 @@ class UsuariosViewModel(private val usuarioRepository: UsuarioRepository) : View
     fun eliminarUsuario(id: UUID) {
         viewModelScope.launch {
             try {
-                //cargarUsuarios()
                 usuarioRepository.eliminarUsuario(id)
                 cargarUsuarios()
 
             } catch (e: Exception) {
                 errorMessage = "Error al eliminar: ${e.message}"
-            }
-        }
-    }
-
-    fun crearUsuario(usuario: Usuario) {
-        viewModelScope.launch {
-            try {
-                usuarioRepository.crearUsuario(usuario)
-                cargarUsuarios()
-            } catch (e: Exception) {
-                errorMessage = "Error al crear: ${e.message}"
             }
         }
     }
@@ -77,5 +69,25 @@ class UsuariosViewModel(private val usuarioRepository: UsuarioRepository) : View
 
     fun seleccionarUsuario(usuario: Usuario) {
         usuarioSeleccionado = usuario
+    }
+
+    fun crearUsuario(nombre: String?, email: String?, contraseña: String?, rol: String?, onResult: (Boolean, String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val request = RegistroRequest(nombre, email, contraseña, rol)
+                val response = RetrofitClient.instance.registrarUsuario(request)
+                if (response.isSuccessful) {
+                    onResult(true, response.body()?.mensaje ?: "Creado correctamente")
+                } else {
+                    onResult(false, "Error: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                onResult(false, "Excepción: ${e.message}")
+            }
+        }
+    }
+
+    fun obtenerUsuarioPorId(id: UUID): Usuario? {
+        return usuarios.find { it.id == id }
     }
 }

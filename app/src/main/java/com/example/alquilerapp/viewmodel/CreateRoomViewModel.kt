@@ -23,10 +23,6 @@ import kotlin.let
 class CreateRoomViewModel(
     private val repository: AlquilerRepository
 ) : ViewModel() {
-
-    // ==========================================================
-    // 1. ESTADO DE LA UI (CAMPOS DE ENTRADA) - Faltaban estas referencias
-    // ==========================================================
     var roomTitle by mutableStateOf("")
         private set
     var roomCity by mutableStateOf("")
@@ -39,17 +35,12 @@ class CreateRoomViewModel(
         private set
     var imageUrl by mutableStateOf("") // Campo para una URL de imagen
         private set
-
-    // ==========================================================
-    // 2. ESTADO DE LA OPERACIÓN Y ERRORES
-    // ==========================================================
     var isSaving by mutableStateOf(false)
         private set
     var saveSuccess by mutableStateOf(false)
         private set
     var errorMessage by mutableStateOf<String?>(null)
         private set
-
     var habitacionActual: Habitacion? = null
         private set
 
@@ -58,7 +49,7 @@ class CreateRoomViewModel(
             try {
                 habitacionActual = obtenerHabitacionPorId(id)
             } catch (e: Exception) {
-                // Manejo de error
+
             }
         }
     }
@@ -72,7 +63,7 @@ class CreateRoomViewModel(
             try {
                 actualizarHabitacion(habitacion)
             } catch (e: Exception) {
-                // Manejo de error
+
             }
         }
     }
@@ -82,51 +73,18 @@ class CreateRoomViewModel(
             try {
                 repository.eliminarHabitacion(id)
             } catch (e: Exception) {
-                // Manejo de error
+
             }
         }
     }
 
-
     private fun AlquilerRepository.eliminarHabitacion(id: UUID) {}
 
-    // ==========================================================
-    // 3. HANDLERS DE EVENTOS (Para actualizar el estado)
-    // ==========================================================
     fun onTitleChange(newValue: String) { roomTitle = newValue }
     fun onCityChange(newValue: String) { roomCity = newValue }
     fun onAddressChange(newValue: String) { roomAddress = newValue }
     fun onDescriptionChange(newValue: String) { roomDescription = newValue }
     fun onImageUrlChange(newValue: String) { imageUrl = newValue }
-    /*
-    fun uploadImage(context: Context, imageUri: Uri) {
-        viewModelScope.launch {
-            try {
-                val inputStream = context.contentResolver.openInputStream(imageUri)
-                val tempFile = File.createTempFile("upload", ".jpg", context.cacheDir)
-                inputStream?.use { input ->
-                    tempFile.outputStream().use { output ->
-                        input.copyTo(output)
-                    }
-                }
-
-                val requestFile = tempFile.asRequestBody("image/*".toMediaTypeOrNull())
-                val body = MultipartBody.Part.createFormData("image", tempFile.name, requestFile)
-
-                val response = repository.uploadImage(body, userIdPart)
-                if (response.isSuccessful) {
-                    // Manejar éxito
-                } else {
-                    errorMessage = "Error al subir imagen: ${response.code()}"
-                }
-            } catch (e: Exception) {
-                errorMessage = "Excepción: ${e.message}"
-            }
-        }
-    }
-    */
-
-     */
     fun onImageSelected(context: Context, uri: Uri) {
         viewModelScope.launch {
             try {
@@ -168,10 +126,6 @@ class CreateRoomViewModel(
             roomPrice = newValue
         }
     }
-
-    // ==========================================================
-    // 4. LÓGICA DE CREACIÓN
-    // ==========================================================
 
     fun createRoom(context: Context) {
         val priceValue = roomPrice.toDoubleOrNull()
@@ -216,9 +170,8 @@ class CreateRoomViewModel(
         }
     }
 
-
     fun getUserIdFromToken(token: String?): String? {
-        return token?.let { JwtUtils.extractClaim(it, "sub") } // o "id", según cómo lo codifique tu backend
+        return token?.let { JwtUtils.extractClaim(it, "sub") }
     }
 
 }

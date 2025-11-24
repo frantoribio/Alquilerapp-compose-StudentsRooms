@@ -7,10 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -25,6 +22,7 @@ import com.example.alquilerapp.ui.components.BottomBar
 import com.example.alquilerapp.ui.screens.*
 import com.example.alquilerapp.viewmodel.CreateRoomViewModelFactory
 import com.example.alquilerapp.viewmodel.HabitacionesViewModel
+import com.example.alquilerapp.viewmodel.HabitacionesViewModelFactory
 import com.example.alquilerapp.viewmodel.LoginViewModel
 import com.example.alquilerapp.viewmodel.PropietarioViewModel
 import com.example.alquilerapp.viewmodel.PropietarioViewModelFactory
@@ -63,11 +61,6 @@ class MainActivity : ComponentActivity() {
                         PropietarioViewModelFactory(alquilerRepository)
                     }
                     val usuariosVM: UsuariosViewModel = viewModel(factory = UsuariosViewModelFactory(UsuarioRepository(apiService)))
-
-                    var shouldRefresh by remember { mutableStateOf(false) }
-
-
-
 
                     NavHost(navController = navController, startDestination = "landing") {
 
@@ -112,8 +105,6 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("admin") {
-                            //val usuariosVM: UsuariosViewModel = viewModel(factory = UsuariosViewModelFactory(UsuarioRepository(apiService)))
-
                             Scaffold(bottomBar = { BottomBar(navController) }) { padding ->
                                 UsuariosAdminScreen(
                                     viewModel = usuariosVM,
@@ -125,6 +116,7 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                         }
+
                         composable("administrador") {
                             Scaffold(bottomBar = { BottomBar(navController) }) { padding ->
                                 AdminScreen(
@@ -132,7 +124,6 @@ class MainActivity : ComponentActivity() {
                                     onLogout = onLogout,
                                     modifier = Modifier.padding(padding)
                                 )
-
                             }
                         }
 
@@ -145,7 +136,6 @@ class MainActivity : ComponentActivity() {
                                 PropietarioScreen(
                                     viewModel = viewModel(factory = propietarioFactory),
                                     onLogout = onLogout,
-                                    // ASEGÚRATE DE PASAR LA FUNCIÓN DE NAVEGACIÓN AQUÍ
                                     onNavigateToCreateRoom = { navController.navigate("create_room_screen") },
                                     onEditRoom = { habitacion ->
                                         navController.navigate("editar_habitacion/${habitacion.id}")
@@ -153,11 +143,8 @@ class MainActivity : ComponentActivity() {
                                     onDeleteRoom = { habitacion ->
                                         propietarioVM.eliminarHabitacion(habitacion.id)
                                     },
-
                                     modifier = Modifier.padding(padding),
-                                    //shouldRefresh = shouldRefresh
                                     navController = navController
-
                                 )
                             }
                         }
@@ -166,7 +153,6 @@ class MainActivity : ComponentActivity() {
                             CreateRoomScreen(
                                 viewModel = viewModel(factory = createRoomFactory),
                                 onRoomCreated = {
-                                    // Vuelve a la pantalla anterior (PropietarioScreen) al completar
                                     navController.previousBackStackEntry
                                         ?.savedStateHandle
                                         ?.set("shouldRefresh", true)
@@ -204,34 +190,44 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-
                         composable("usuarioForm") {
-                            /*val context = LocalContext.current
-                            val tokenStore = TokenStore(context)
-                            val apiService = ApiServiceBuilder.create(tokenStore)
-                            val usuarioRepository = UsuarioRepository(apiService)
-                            val factory = UsuariosViewModelFactory(usuarioRepository)
-                            val usuariosVM: UsuariosViewModel = viewModel(factory = factory)*/
-
-
-
-                            UsuarioAdminFormScreen(
-
-                                initialData = null, // o desde ViewModel si estás editando
-                                //initialData = usuariosVM.usuarioSeleccionado as UsuarioDTO?,
-
-                                onSubmit = { dto ->
-                                    // lógica para crear o actualizar usuario
-                                    navController.popBackStack()
-                                },
-                                onCancel = {
-                                    navController.popBackStack()
-                                }
+                            CrearUsuarioScreen(
+                                usuariosViewModel = usuariosVM,
+                                navController = navController,
+                                modifier = Modifier,
+                                onNavigateBack = { navController.popBackStack() }
                             )
                         }
 
+                        composable("usuarioForm?id={id}") { backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("id")?.let { UUID.fromString(it) }
+                            EditarUsuarioScreen(
+                                usuariosViewModel = usuariosVM,
+                                navController = navController,
+                                modifier = Modifier,
+                                id = id,
+                                onNavigateBack = { navController.popBackStack() }
+                            )
+                        }
+
+
                         composable("habitaciones") {
-                            //HabitacionesScreen(viewModel = habVM)
+                            val repository = AlquilerRepository(
+                                apiService = ApiServiceBuilder.create(tokenStore)
+                            )
+                            val viewModel: HabitacionesViewModel = viewModel(
+                                factory = HabitacionesViewModelFactory(repository)
+                            )
+                            HabitacionesAdminScreen(
+                                viewModel = viewModel,
+                                onBack = { navController.popBackStack() },
+                                onEditRoom = { habitacion ->
+                                    navController.navigate("editar_habitacion/${habitacion.id}")
+                                },
+                                onDeleteRoom = { habitacion ->
+                                    viewModel.eliminarHabitacion(habitacion.id)
+                                }
+                            )
                         }
 
                         composable("reservas") {
@@ -242,9 +238,11 @@ class MainActivity : ComponentActivity() {
                             val id = backStackEntry.arguments?.getString("id")?.let { UUID.fromString(it) }
                             if (id != null) {
                                 EditarHabitacionScreen(
-                                    habitacionId = id as UUID,
-                                    viewModel = viewModel(factory = createRoomFactory),
-                                    onBack = { navController.popBackStack() }
+                                    habitacionesViewModel = habVM,
+                                    navController = navController,
+                                    modifier = Modifier,
+                                    id = id,
+                                    onNavigateBack = { navController.popBackStack() }
                                 )
                             }
                         }

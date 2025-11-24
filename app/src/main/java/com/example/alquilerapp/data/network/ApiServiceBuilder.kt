@@ -9,10 +9,8 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 
 object ApiServiceBuilder {
-
     private const val BASE_URL = "http://10.0.2.2:8080/api/"
 
-    // Opción 1: Crear con TokenStore
     fun create(tokenStore: TokenStore): ApiService {
         val tokenProvider: () -> String? = {
             runBlocking {
@@ -23,18 +21,15 @@ object ApiServiceBuilder {
         return create(interceptor)
     }
 
-    // Opción 2: Crear con AuthInterceptor directamente
     fun create(authInterceptor: AuthInterceptor): ApiService {
         val client = OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
             .build()
-
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-
         return retrofit.create(ApiService::class.java)
     }
 }

@@ -57,6 +57,7 @@ dependencies {
     implementation 'androidx.compose.runtime:runtime-saveable:1.9.4'
     implementation 'androidx.compose.foundation:foundation:1.9.4'
     implementation 'androidx.compose.foundation:foundation-layout:1.9.4'
+    implementation 'androidx.compose.runtime:runtime:1.9.5'
     debugImplementation 'androidx.compose.ui:ui-tooling'
 
 

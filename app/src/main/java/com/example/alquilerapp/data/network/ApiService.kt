@@ -54,11 +54,11 @@ interface ApiService {
     @GET("usuarios")
     suspend fun listarUsuarios(): List<Usuario>
 
-    @PUT("usuarios/{id}")
-    suspend fun crearUsuario(usuario: Usuario): Usuario
+    @POST("usuarios")
+    suspend fun crearUsuario(@Body usuario: Usuario): Response<Usuario>
 
-    @POST("usuarios/{id}")
-    suspend fun actualizarUsuario(id: UUID, usuario: Usuario): Usuario
+    @PUT("usuarios/{id}")
+    suspend fun actualizarUsuario(@Path("id") id: UUID, @Body usuario: Usuario): Response<Usuario>
 
     @DELETE("usuarios/{id}")
     suspend fun eliminarUsuario(@Path("id") id: UUID): Response<Void>

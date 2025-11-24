@@ -28,4 +28,11 @@ class AlquilerRepository(private val apiService: ApiService) {
     suspend fun editarHabitacion(id: String, habitacion: Habitacion) {
         apiService.editarHabitacion(id, habitacion)
     }
+    suspend fun getHabitaciones(): Response<List<Habitacion>> {
+        return apiService.getHabitaciones()
+    }
+
+    suspend fun actualizarHabitacion(id: String, habitacion: Habitacion) {
+        apiService.editarHabitacion(id, habitacion)
+    }
 }

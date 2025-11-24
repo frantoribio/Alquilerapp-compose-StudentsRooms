@@ -42,10 +42,8 @@ fun CreateRoomScreen(
             viewModel.onImageSelected(context, uri)
         }
     }
-
     val isSaving = viewModel.isSaving
 
-    // Observar el estado de éxito
     LaunchedEffect(viewModel.saveSuccess) {
         if (viewModel.saveSuccess) {
             Toast.makeText(context, "Habitación creada con éxito", Toast.LENGTH_SHORT).show()
@@ -53,11 +51,9 @@ fun CreateRoomScreen(
         }
     }
 
-    // --- Lógica para habilitar el botón de Guardar ---
     val isFormValid = remember(
         viewModel.roomTitle, viewModel.roomCity, viewModel.roomAddress, viewModel.roomPrice
     ) {
-        // Validar campos obligatorios del DTO
         viewModel.roomTitle.isNotBlank() &&
                 viewModel.roomCity.isNotBlank() &&
                 viewModel.roomAddress.isNotBlank() &&
@@ -75,7 +71,8 @@ fun CreateRoomScreen(
                 }
             )
         }
-    ) { paddingValues ->
+    ) {
+        paddingValues ->
         Column(
             modifier = Modifier
                 .padding(paddingValues)
@@ -86,7 +83,6 @@ fun CreateRoomScreen(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 1. Campo Título (Usando roomTitle y onTitleChange)
             OutlinedTextField(
                 value = viewModel.roomTitle,
                 onValueChange = viewModel::onTitleChange,
@@ -97,7 +93,6 @@ fun CreateRoomScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 2. Campo Ciudad
             OutlinedTextField(
                 value = viewModel.roomCity,
                 onValueChange = viewModel::onCityChange,
@@ -108,7 +103,6 @@ fun CreateRoomScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 3. Campo Dirección
             OutlinedTextField(
                 value = viewModel.roomAddress,
                 onValueChange = viewModel::onAddressChange,
@@ -119,8 +113,6 @@ fun CreateRoomScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-
-            // 4. Campo Precio Mensual (Usando roomPrice y onPriceChange)
             OutlinedTextField(
                 value = viewModel.roomPrice,
                 onValueChange = viewModel::onPriceChange,
@@ -132,7 +124,6 @@ fun CreateRoomScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 5. Campo Descripción (Usando roomDescription y onDescriptionChange)
             OutlinedTextField(
                 value = viewModel.roomDescription,
                 onValueChange = viewModel::onDescriptionChange,
@@ -165,7 +156,6 @@ fun CreateRoomScreen(
                 Text("Seleccionar imagen desde el dispositivo")
             }
 
-            // Botón de Guardar
             Button(
                 onClick = { viewModel.createRoom(context) },
                 enabled = !isSaving && isFormValid, // Condición de guardado combinada
@@ -178,7 +168,6 @@ fun CreateRoomScreen(
                 }
             }
 
-            // Mensaje de Error
             viewModel.errorMessage?.let { errorMsg ->
                 Text(
                     text = errorMsg,

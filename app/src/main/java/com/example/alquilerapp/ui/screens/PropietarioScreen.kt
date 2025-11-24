@@ -160,7 +160,6 @@ fun PropietarioScreen(
     }
 }
 
-
 @SuppressLint("DefaultLocale")
 @Composable
 fun HabitacionListItem(

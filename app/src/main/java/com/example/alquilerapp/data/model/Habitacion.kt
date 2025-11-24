@@ -23,11 +23,10 @@ data class Habitacion(
     val titulo: String,
     val ciudad: String,
     val direccion: String,
-    @SerialName("precioMensual") // <--- ¡Asegúrate de tener esta anotación!
+    @SerialName("precioMensual")
     val precioMensual: Double,
     val descripcion: String,
     val imagenesUrl: List<String>,
-    // ... otros campos
 )
 
 /**
@@ -40,6 +39,5 @@ data class Habitacion(
 * @return La URL modificada como un [String], o `null` si la lista de imágenes está vacía.
 */
 fun Habitacion.getEmulatedImageUrl(): String? {
-    // Tomamos la primera imagen y corregimos la URL para el emulador
     return this.imagenesUrl.firstOrNull()?.replace("localhost", "10.0.2.2")
 }

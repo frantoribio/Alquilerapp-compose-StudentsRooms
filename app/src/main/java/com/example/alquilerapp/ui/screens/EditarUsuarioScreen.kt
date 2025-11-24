@@ -21,6 +21,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,33 +33,46 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.alquilerapp.viewmodel.LoginViewModel
+import com.example.alquilerapp.data.model.Usuario
+import com.example.alquilerapp.viewmodel.UsuariosViewModel
 import kotlinx.coroutines.launch
+import java.util.UUID
+import com.example.alquilerapp.data.model.Rol
 
-/**
- * Pantalla de registro de usuario.
- *
- * @param registroViewModel El ViewModel para manejar la lógica del registro.
- */
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegistroScreen(
-    registroViewModel: LoginViewModel, // ← ViewModel como parámetro
-    navController: NavController,      // ← Para navegar a login
+fun EditarUsuarioScreen(
+    usuariosViewModel: UsuariosViewModel,
+    navController: NavController,
     modifier: Modifier = Modifier,
+    id: UUID?,
     onNavigateBack: () -> Unit
 ) {
-    var nombre by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var contraseña by remember { mutableStateOf("") }
+    var nombre: String? by remember { mutableStateOf("") }
+    var email: String? by remember { mutableStateOf("") }
+    var contraseña: String by remember { mutableStateOf("") }
     var contraseñaVisible by remember { mutableStateOf(false) }
-    var rolSeleccionado by remember { mutableStateOf("") }
+    var rolSeleccionado by remember { mutableStateOf<Rol?>(null) } // 🔹 ahora es Rol
     var expanded by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf("") }
-    val roles = listOf("PROPIETARIO", "ALUMNO")
+    val roles = Rol.values().toList() // 🔹 lista de enums
 
-    fun esEmailValido(email: String): Boolean {
+    fun esEmailValido(email: String?): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+    // 🔹 Cargar datos del usuario al entrar en la pantalla
+    LaunchedEffect(id) {
+        val usuario = usuariosViewModel.obtenerUsuarioPorId(id!!)
+        usuario?.let {
+            nombre = it.nombre
+            email = it.email
+            contraseña = it.contrasena ?: ""
+            contraseñaVisible = false
+            rolSeleccionado = it.rol
+        }
     }
 
     Column(
@@ -68,47 +82,43 @@ fun RegistroScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text("Registro de Usuario", style = MaterialTheme.typography.headlineSmall)
+        Text("Editar Usuario", style = MaterialTheme.typography.headlineSmall)
         Spacer(Modifier.height(16.dp))
 
-        OutlinedTextField(
-            value = nombre,
-            onValueChange = {
-                nombre = it
-                error = ""
-            },
-            label = { Text("Nombre") },
-            singleLine = true
-        )
+        nombre?.let { it1 ->
+            OutlinedTextField(
+                value = it1,
+                onValueChange = { nombre = it; error = "" },
+                label = { Text("Nombre") },
+                singleLine = true
+            )
+        }
 
-        OutlinedTextField(
-            value = email,
-            onValueChange = {
-                email = it
-                error = ""
-            },
-            label = { Text("Email") },
-            singleLine = true
-        )
+        email?.let { it1 ->
+            OutlinedTextField(
+                value = it1,
+                onValueChange = { email = it; error = "" },
+                label = { Text("Email") },
+                singleLine = true
+            )
+        }
 
-        OutlinedTextField(
-            value = contraseña,
-            onValueChange = {
-                contraseña = it
-                error = ""
-            },
-            label = { Text("Contraseña") },
-            singleLine = true,
-            visualTransformation = if (contraseñaVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                val image = if (contraseñaVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                val description = if (contraseñaVisible) "Ocultar contraseña" else "Mostrar contraseña"
-
-                IconButton(onClick = { contraseñaVisible = !contraseñaVisible }) {
-                    Icon(imageVector = image, contentDescription = description)
+        contraseña?.let { it1 ->
+            OutlinedTextField(
+                value = it1,
+                onValueChange = { contraseña = it; error = "" },
+                label = { Text("Contraseña") },
+                singleLine = true,
+                visualTransformation = if (contraseñaVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    val image = if (contraseñaVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                    val description = if (contraseñaVisible) "Ocultar contraseña" else "Mostrar contraseña"
+                    IconButton(onClick = { contraseñaVisible = !contraseñaVisible }) {
+                        Icon(imageVector = image, contentDescription = description)
+                    }
                 }
-            }
-        )
+            )
+        }
 
         Spacer(Modifier.height(8.dp))
         ExposedDropdownMenuBox(
@@ -116,13 +126,11 @@ fun RegistroScreen(
             onExpandedChange = { expanded = !expanded }
         ) {
             OutlinedTextField(
-                value = rolSeleccionado,
+                value = rolSeleccionado?.name ?: "", // 🔹 mostramos el nombre del enum
                 onValueChange = {},
                 readOnly = true,
                 label = { Text("Rol") },
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 modifier = Modifier.menuAnchor()
             )
             ExposedDropdownMenu(
@@ -131,7 +139,7 @@ fun RegistroScreen(
             ) {
                 roles.forEach { rol ->
                     DropdownMenuItem(
-                        text = { Text(rol) },
+                        text = { Text(rol.name) },
                         onClick = {
                             rolSeleccionado = rol
                             expanded = false
@@ -150,32 +158,35 @@ fun RegistroScreen(
         Spacer(Modifier.height(16.dp))
         val scope = rememberCoroutineScope()
 
-
         Button(
             onClick = {
-                if (nombre.isBlank() || email.isBlank() || contraseña.isBlank() || rolSeleccionado.isBlank()) {
+                if (nombre?.isBlank() == true || email?.isBlank() == true || contraseña?.isBlank() == true || rolSeleccionado == null) {
                     error = "Todos los campos son obligatorios"
                 } else if (!esEmailValido(email)) {
                     error = "El email introducido no es válido"
                 } else {
                     scope.launch {
-                        registroViewModel.registrar(nombre, email, contraseña, rolSeleccionado) { success, mensaje ->
-                            if (success) {
-                                navController.navigate("login")
-                            } else {
-                                error = mensaje
-                            }
-                        }
+                        usuariosViewModel.actualizarUsuario(
+                            id = id!!,
+                            usuario = Usuario(
+                                id = id,
+                                nombre = nombre,
+                                email = email,
+                                contrasena = contraseña,
+                                rol = rolSeleccionado!! // 🔹 ya es Rol
+                            )
+                        )
+                        navController.popBackStack() // vuelve a la lista
                     }
                 }
             }
         ) {
-            Text("Registrar")
+            Text("Actualizar Usuario")
         }
 
         Spacer(Modifier.height(16.dp))
         TextButton(onClick = onNavigateBack) {
-            Text("¿Ya tienes cuenta? Inicia sesión")
+            Text("Cancelar")
         }
     }
 }

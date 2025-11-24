@@ -7,7 +7,6 @@ import org.json.JSONObject
  * Clase de utilidad para operaciones relacionadas con JWTs.
  */
 object JwtUtils {
-    // Very small helper to decode JWT payload and extract a claim (unsafe; do not use for security decisions)
     fun extractClaim(token: String, claim: String): String? {
         try {
             val parts = token.split('.')

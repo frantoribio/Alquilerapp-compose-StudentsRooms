@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.filled.Bed
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Hotel
 import androidx.compose.material.icons.filled.Logout
@@ -77,26 +75,26 @@ fun AdminScreen(navController: NavController,
     }
 }
 
-    @Composable
-    fun AdminOption(icon: ImageVector, label: String, onClick: () -> Unit) {
-        Card(
+@Composable
+fun AdminOption(icon: ImageVector, label: String, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        elevation = CardDefaults.cardElevation(8.dp)
+    ) {
+        Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick),
-            elevation = CardDefaults.cardElevation(8.dp)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = label,
-                    modifier = Modifier.size(32.dp)
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(text = label, style = MaterialTheme.typography.titleMedium)
-            }
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                modifier = Modifier.size(32.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(text = label, style = MaterialTheme.typography.titleMedium)
         }
     }
+}

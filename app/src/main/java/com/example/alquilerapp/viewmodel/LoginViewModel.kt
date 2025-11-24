@@ -24,7 +24,6 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     val role: StateFlow<String?> = _role
     private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading
-
     private val _loginError = MutableStateFlow<String?>(null)
     val loginError: StateFlow<String?> = _loginError
 
@@ -46,7 +45,6 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                     val body = resp.body()
                     val token = body?.token
                     var role = body?.rol
-                    // If backend returns token but not explicit role, try to decode role from JWT payload claim "role" or "roles"
                     if (!token.isNullOrEmpty() && role.isNullOrBlank()) {
                         val extracted = JwtUtils.extractClaim(token, "role") ?: JwtUtils.extractClaim(token, "roles")
                         if (!extracted.isNullOrBlank()) role = extracted
@@ -74,8 +72,6 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
      */
     fun logout() {
         _role.value = null
-        // 2. Limpiar cualquier token o credencial persistente (SharedPreferences, DataStore, etc.)
-        // Si usas tokens, añade aquí la lógica de limpieza.
         println("Sesión cerrada y estado reseteado.")
     }
 

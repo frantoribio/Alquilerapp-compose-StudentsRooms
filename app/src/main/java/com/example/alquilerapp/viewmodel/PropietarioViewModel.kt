@@ -12,16 +12,10 @@ import kotlinx.coroutines.launch
 class PropietarioViewModel(
     private val repository: AlquilerRepository
 ) : ViewModel() {
-
-    // Estado que contiene la lista de habitaciones
     var habitaciones by mutableStateOf<List<Habitacion>>(emptyList())
         private set
-
-    // Estado para saber si los datos están cargando
     var isLoading by mutableStateOf(false)
         private set
-
-    // Estado para manejar errores
     var errorMessage by mutableStateOf<String?>(null)
         private set
 
