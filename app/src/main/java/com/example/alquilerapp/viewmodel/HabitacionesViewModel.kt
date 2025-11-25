@@ -1,13 +1,20 @@
 package com.example.alquilerapp.viewmodel
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.alquilerapp.data.model.Habitacion
+import com.example.alquilerapp.data.model.UploadResponse
+import com.example.alquilerapp.data.network.RetrofitClient
 import com.example.alquilerapp.repository.AlquilerRepository
 import com.example.alquilerapp.repository.HabitacionesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.UUID
 
 /**
@@ -16,20 +23,16 @@ import java.util.UUID
 class HabitacionesViewModel(
     private val alquilerRepo: AlquilerRepository? = null
 ) : ViewModel() {
-
-    // si no te pasan un repo, usas el por defecto
     private val repo = HabitacionesRepository()
-
     private val _habitaciones = MutableStateFlow<List<Habitacion>>(emptyList())
     val habitaciones: StateFlow<List<Habitacion>> = _habitaciones
-
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
 
     fun editarHabitacion(habitacion: Habitacion, id: UUID) {
         viewModelScope.launch {
             try {
-                repo.editarHabitacion(habitacion.id, habitacion)
+                repo.editarHabitacion(id, habitacion)
                 loadHabitaciones()
             } catch (e: Exception) {
                 _errorMessage.value = "Error al editar la habitación: ${e.message ?: "Desconocido"}"
@@ -52,30 +55,59 @@ class HabitacionesViewModel(
         }
     }
 
-    fun eliminarHabitacion(habitacionId: String) {
+    fun eliminarHabitacion(habitacionId: UUID) {
         viewModelScope.launch {
             try {
                 alquilerRepo?.eliminarHabitacion(habitacionId)
                 loadHabitaciones()
             } catch (e: Exception) {
-                _errorMessage.value = "Error al eliminar la habitación: ${e.message ?: "Desconocido"}"
+                _errorMessage.value =
+                    "Error al eliminar la habitación: ${e.message ?: "Desconocido"}"
             }
         }
     }
 
     fun obtenerHabitacionPorId(id: UUID): Habitacion? {
-        return habitaciones.value.find { it.id == id.toString() }
+        return habitaciones.value.find { it.id == id }
     }
+
 
     fun actualizarHabitacion(id: UUID, habitacion: Habitacion) {
         viewModelScope.launch {
             try {
-                alquilerRepo?.actualizarHabitacion(habitacion.id, habitacion)
+                alquilerRepo?.actualizarHabitacion(id, habitacion)
                 loadHabitaciones()
             } catch (e: Exception) {
-                _errorMessage.value = "Error al actualizar la habitación: ${e.message ?: "Desconocido"}"
+                _errorMessage.value =
+                    "Error al actualizar la habitación: ${e.message ?: "Desconocido"}"
+            }
+        }
+    }
+
+    fun onImageSelected(context: Context, uri: Uri) {
+        viewModelScope.launch {
+            try {
+                val contentResolver = context.contentResolver
+                val inputStream = contentResolver.openInputStream(uri) ?: return@launch
+                val fileBytes = inputStream.readBytes()
+                val requestBody = fileBytes.toRequestBody("image/*".toMediaTypeOrNull())
+                val multipart = MultipartBody.Part.createFormData(
+                    "file", "imagen.jpg", requestBody
+                )
+                val api = RetrofitClient.instance
+                val response = api.uploadImage(multipart)
+                val _imagenesUrl = MutableStateFlow<List<String>>(emptyList())
+                // tu ApiService
+                if (response.isSuccessful) {
+                    val imageUrl: UploadResponse = response.body()!!
+                    // 🔹 Actualiza la lista de imágenes
+                    val current = _imagenesUrl.value.toMutableList()
+                    current.add(imageUrl.toString())
+                    _imagenesUrl.value = current
+                }
+            } catch (e: Exception) {
+                _errorMessage.value = "Error al subir imagen: ${e.message}"
             }
         }
     }
 }
-

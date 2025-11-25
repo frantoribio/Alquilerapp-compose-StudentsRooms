@@ -38,11 +38,9 @@ import java.text.Normalizer
 @Composable
 fun LandingScreen(viewModel: HabitacionesViewModel, onLoginClick: () -> Unit) {
     val habitaciones by viewModel.habitaciones.collectAsState()
-    // Load once
     var expanded by remember { mutableStateOf(false) }
     var ciudadFiltro by remember { mutableStateOf("") }
     var precioMaximo by remember { mutableStateOf("") }
-
 
     androidx.compose.runtime.LaunchedEffect(Unit) {
         viewModel.loadHabitaciones()
@@ -139,7 +137,6 @@ fun LandingScreen(viewModel: HabitacionesViewModel, onLoginClick: () -> Unit) {
     }
 }
 
-// Función de extensión para normalizar texto (quita acentos y pasa a minúsculas)
 fun String.normalizado(): String {
     return Normalizer.normalize(this, Normalizer.Form.NFD)
         .replace("\\p{InCombiningDiacriticalMarks}+".toRegex(), "")

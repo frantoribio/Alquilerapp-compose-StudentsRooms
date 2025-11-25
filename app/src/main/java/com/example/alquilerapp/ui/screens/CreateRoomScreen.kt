@@ -22,7 +22,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 
 /**
  * Composable para la creación de una nueva habitación.
- *
  * @param viewModel El ViewModel asociado a esta pantalla.
  * @param onRoomCreated Función para volver atrás al éxito.
  * @param onBack Función para volver atrás.
@@ -31,7 +30,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 @Composable
 fun CreateRoomScreen(
     viewModel: CreateRoomViewModel = viewModel(),
-    onRoomCreated: () -> Unit, // Función para volver atrás al éxito
+    onRoomCreated: () -> Unit,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
@@ -137,17 +136,6 @@ fun CreateRoomScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 6. Campo URL de Imagen
-           /* OutlinedTextField(
-                value = viewModel.imageUrl,
-                onValueChange = viewModel::onImageUrlChange,
-                label = { Text("URL de la imagen principal") },
-                placeholder = { Text("Ej: http://tuapi.com/imagen.jpg") },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !isSaving
-            )
-            Spacer(modifier = Modifier.height(24.dp))*/
-
             Button(
                 onClick = { imagePickerLauncher.launch("image/*") },
                 enabled = !isSaving,
@@ -158,7 +146,7 @@ fun CreateRoomScreen(
 
             Button(
                 onClick = { viewModel.createRoom(context) },
-                enabled = !isSaving && isFormValid, // Condición de guardado combinada
+                enabled = !isSaving && isFormValid,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 if (isSaving) {

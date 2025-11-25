@@ -8,6 +8,7 @@ import com.example.alquilerapp.data.network.ApiService
 import com.example.alquilerapp.data.network.RetrofitClient
 import okhttp3.MultipartBody
 import retrofit2.Response
+import java.util.UUID
 
 /**
  * clase que se encarga de obtener los datos de la api
@@ -33,11 +34,11 @@ class HabitacionesRepository {
         return api.uploadImage(image)
     }
 
-    suspend fun editarHabitacion(id: String, habitacion: Habitacion) {
+    suspend fun editarHabitacion(id: UUID, habitacion: Habitacion) {
         api.editarHabitacion(id, habitacion)
     }
 
-    suspend fun eliminarHabitacion(habitacionId: String) {
+    suspend fun eliminarHabitacion(habitacionId: UUID) {
         api.eliminarHabitacion(habitacionId)
     }
 }

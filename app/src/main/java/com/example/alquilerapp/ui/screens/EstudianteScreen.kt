@@ -47,6 +47,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
+import java.util.UUID
 
 
 /**
@@ -57,7 +58,7 @@ import androidx.compose.ui.text.input.KeyboardType
 fun EstudianteScreen(
     viewModel: HabitacionesViewModel,
     onLogout: () -> Unit,
-    onReservarClick: (idHabitacion: String) -> Unit,
+    onReservarClick: (idHabitacion: UUID) -> Unit,
     modifier: Modifier = Modifier
 
 ) {
@@ -67,7 +68,6 @@ fun EstudianteScreen(
     var ciudadFiltro by remember { mutableStateOf("") }
     var precioMaximo by remember { mutableStateOf("") }
 
-    // Cargar habitaciones al iniciar
     androidx.compose.runtime.LaunchedEffect(Unit) {
         viewModel.loadHabitaciones()
     }
@@ -76,8 +76,6 @@ fun EstudianteScreen(
         (ciudadFiltro.isBlank() || hab.ciudad.normalizado().contains(ciudadFiltro.normalizado())) &&
                 (precioMaximo.toFloatOrNull()?.let { hab.precioMensual <= it } ?: true)
     }
-
-
 
     Scaffold(
         topBar = {

@@ -6,6 +6,7 @@ import com.example.alquilerapp.data.model.dto.CrearHabitacionDto
 import com.example.alquilerapp.data.network.ApiService
 import okhttp3.MultipartBody
 import retrofit2.Response
+import java.util.UUID
 
 
 class AlquilerRepository(private val apiService: ApiService) {
@@ -21,18 +22,19 @@ class AlquilerRepository(private val apiService: ApiService) {
         return apiService.subirImagen(image, userId)
     }
 
-    suspend fun eliminarHabitacion(id: String) {
+    suspend fun eliminarHabitacion(id: UUID) {
         apiService.eliminarHabitacion(id)
     }
 
-    suspend fun editarHabitacion(id: String, habitacion: Habitacion) {
+    suspend fun editarHabitacion(id: UUID, habitacion: Habitacion) {
         apiService.editarHabitacion(id, habitacion)
     }
+
     suspend fun getHabitaciones(): Response<List<Habitacion>> {
         return apiService.getHabitaciones()
     }
 
-    suspend fun actualizarHabitacion(id: String, habitacion: Habitacion) {
+    suspend fun actualizarHabitacion(id: UUID, habitacion: Habitacion) {
         apiService.editarHabitacion(id, habitacion)
     }
 }

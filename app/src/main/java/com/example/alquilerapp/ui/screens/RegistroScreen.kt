@@ -43,8 +43,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistroScreen(
-    registroViewModel: LoginViewModel, // ← ViewModel como parámetro
-    navController: NavController,      // ← Para navegar a login
+    registroViewModel: LoginViewModel,
+    navController: NavController,
     modifier: Modifier = Modifier,
     onNavigateBack: () -> Unit
 ) {

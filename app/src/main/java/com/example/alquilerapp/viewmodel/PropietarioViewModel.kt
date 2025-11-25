@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.alquilerapp.data.model.Habitacion
 import com.example.alquilerapp.repository.AlquilerRepository
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class PropietarioViewModel(
     private val repository: AlquilerRepository
@@ -41,7 +42,7 @@ class PropietarioViewModel(
         }
     }
 
-    fun eliminarHabitacion(habitacionId: String) {
+    fun eliminarHabitacion(habitacionId: UUID) {
         viewModelScope.launch {
 
             try {
@@ -53,7 +54,7 @@ class PropietarioViewModel(
         }
     }
 
-    fun editarHabitacion(habitacionId: String, habitacion: Habitacion) {
+    fun editarHabitacion(habitacionId: UUID, habitacion: Habitacion) {
         viewModelScope.launch {
             try {
                 repository.editarHabitacion(habitacionId, habitacion)

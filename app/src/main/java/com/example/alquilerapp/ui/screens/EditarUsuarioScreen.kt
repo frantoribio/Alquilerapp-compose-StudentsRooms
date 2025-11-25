@@ -39,8 +39,6 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import com.example.alquilerapp.data.model.Rol
 
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditarUsuarioScreen(
@@ -54,22 +52,21 @@ fun EditarUsuarioScreen(
     var email: String? by remember { mutableStateOf("") }
     var contraseña: String by remember { mutableStateOf("") }
     var contraseñaVisible by remember { mutableStateOf(false) }
-    var rolSeleccionado by remember { mutableStateOf<Rol?>(null) } // 🔹 ahora es Rol
+    var rolSeleccionado by remember { mutableStateOf<Rol?>(null) }
     var expanded by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf("") }
-    val roles = Rol.values().toList() // 🔹 lista de enums
+    val roles = Rol.values().toList()
 
     fun esEmailValido(email: String?): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
-    // 🔹 Cargar datos del usuario al entrar en la pantalla
     LaunchedEffect(id) {
         val usuario = usuariosViewModel.obtenerUsuarioPorId(id!!)
         usuario?.let {
             nombre = it.nombre
             email = it.email
-            contraseña = it.contrasena ?: ""
+            contraseña = ""
             contraseñaVisible = false
             rolSeleccionado = it.rol
         }
@@ -103,22 +100,20 @@ fun EditarUsuarioScreen(
             )
         }
 
-        contraseña?.let { it1 ->
-            OutlinedTextField(
-                value = it1,
-                onValueChange = { contraseña = it; error = "" },
-                label = { Text("Contraseña") },
-                singleLine = true,
-                visualTransformation = if (contraseñaVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                trailingIcon = {
-                    val image = if (contraseñaVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                    val description = if (contraseñaVisible) "Ocultar contraseña" else "Mostrar contraseña"
-                    IconButton(onClick = { contraseñaVisible = !contraseñaVisible }) {
-                        Icon(imageVector = image, contentDescription = description)
-                    }
+        OutlinedTextField(
+            value = contraseña,
+            onValueChange = { contraseña = it; error = "" },
+            label = { Text("Contraseña (opcional)") }, // 🔹 aclaramos que es opcional
+            singleLine = true,
+            visualTransformation = if (contraseñaVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                val image = if (contraseñaVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                val description = if (contraseñaVisible) "Ocultar contraseña" else "Mostrar contraseña"
+                IconButton(onClick = { contraseñaVisible = !contraseñaVisible }) {
+                    Icon(imageVector = image, contentDescription = description)
                 }
-            )
-        }
+            }
+        )
 
         Spacer(Modifier.height(8.dp))
         ExposedDropdownMenuBox(
@@ -160,8 +155,8 @@ fun EditarUsuarioScreen(
 
         Button(
             onClick = {
-                if (nombre?.isBlank() == true || email?.isBlank() == true || contraseña?.isBlank() == true || rolSeleccionado == null) {
-                    error = "Todos los campos son obligatorios"
+                if (nombre?.isBlank() == true || email?.isBlank() == true || /*contraseña?.isBlank() == true ||*/ rolSeleccionado == null) {
+                    error = "Nombre, email y rol son obligatorios"
                 } else if (!esEmailValido(email)) {
                     error = "El email introducido no es válido"
                 } else {

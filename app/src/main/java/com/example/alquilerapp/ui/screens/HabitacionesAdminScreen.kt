@@ -33,8 +33,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
 import com.example.alquilerapp.data.model.Habitacion
 import com.example.alquilerapp.data.model.getEmulatedImageUrl
-import com.example.alquilerapp.data.network.ApiService
-import com.example.alquilerapp.repository.AlquilerRepository
 
 /**
  * Composable para la pantalla inicial.
@@ -53,7 +51,6 @@ fun HabitacionesAdminScreen(
     var ciudadFiltro by remember { mutableStateOf("") }
     var precioMaximo by remember { mutableStateOf("") }
 
-    // ✅ Estados para eliminar
     var showDialog by remember { mutableStateOf(false) }
     var habitacionAEliminar by remember { mutableStateOf<Habitacion?>(null) }
 
@@ -65,7 +62,6 @@ fun HabitacionesAdminScreen(
         (ciudadFiltro.isBlank() || hab.ciudad.normalizado().contains(ciudadFiltro.normalizado())) &&
                 (precioMaximo.toFloatOrNull()?.let { hab.precioMensual <= it } ?: true)
     }
-
 
     Scaffold(
         topBar = {
@@ -114,7 +110,6 @@ fun HabitacionesAdminScreen(
                             }
                         }
                     }
-                    // ✅ Botón de volver en vez de login
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
                     }
@@ -185,7 +180,6 @@ fun HabitacionesAdminScreen(
             }
         }
 
-        // ✅ Diálogo de confirmación
         if (showDialog && habitacionAEliminar != null) {
             AlertDialog(
                 onDismissRequest = { showDialog = false },

@@ -27,7 +27,7 @@ fun LoginScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val loginError by viewModel.loginError.collectAsState() // ← Nuevo
+    val loginError by viewModel.loginError.collectAsState()
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -71,7 +71,6 @@ fun LoginScreen(
                 error = ""
             },
             label = { Text("Contraseña") },
-            //visualTransformation = PasswordVisualTransformation(),
             singleLine = true,
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {

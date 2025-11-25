@@ -83,10 +83,17 @@ interface ApiService {
     ): Response<UploadResponse>
 
     @DELETE("habitaciones/{id}")
-    suspend fun eliminarHabitacion(@Path("id") id: String)
+    suspend fun eliminarHabitacion(@Path("id") id: UUID)
 
+    /*@PUT("habitaciones/{id}")
+    suspend fun editarHabitacion(@Path("id") id: UUID, @Body habitacion: Habitacion)
+*/
     @PUT("habitaciones/{id}")
-    suspend fun editarHabitacion(@Path("id") id: String, @Body habitacion: Habitacion)
+    suspend fun editarHabitacion(
+        @Path("id") id: UUID,
+        @Body habitacion: Habitacion
+    ): Response<Habitacion>
+
 
 }
 

@@ -1,9 +1,14 @@
 package com.example.alquilerapp.ui.screens
 
+import android.annotation.SuppressLint
+import android.content.Context
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -20,6 +25,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.alquilerapp.data.model.Habitacion
@@ -30,9 +36,10 @@ import java.util.UUID
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditarHabitacionScreen(
+    context: Context = LocalContext.current,
     habitacionesViewModel: HabitacionesViewModel,
     navController: NavController,
-    modifier: Modifier = Modifier,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
     id: UUID,
     onNavigateBack: () -> Unit
 ) {
@@ -43,6 +50,14 @@ fun EditarHabitacionScreen(
     var descripcion: String? by remember { mutableStateOf("") }
     var imagenesUrl: List<String> by remember { mutableStateOf(emptyList()) }
     var error by remember { mutableStateOf("") }
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let {
+            habitacionesViewModel.onImageSelected(context, uri)
+        }
+    }
+
 
     LaunchedEffect(id) {
         val habitacion = habitacionesViewModel.obtenerHabitacionPorId(id)
@@ -114,15 +129,12 @@ fun EditarHabitacionScreen(
             )
         }
 
-        OutlinedTextField(
-            value = imagenesUrl.toString(),
-            onValueChange = { it ->
-                imagenesUrl = it.split(",").map { it.trim() }
-                error = ""
-            },
-            label = { Text("Imagenes URL") },
-            singleLine = true
-        )
+        Button(
+            onClick = { imagePickerLauncher.launch("image/*") },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Seleccionar imagen desde el dispositivo")
+        }
 
         if (error.isNotBlank()) {
             Spacer(Modifier.height(8.dp))
@@ -146,7 +158,7 @@ fun EditarHabitacionScreen(
                         habitacionesViewModel.actualizarHabitacion(
                             id = id,
                             habitacion = Habitacion(
-                                id = id.toString(),
+                                id = id,
                                 titulo = titulo!!,
                                 ciudad = ciudad!!,
                                 direccion = direccion!!,

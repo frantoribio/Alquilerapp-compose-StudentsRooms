@@ -2,6 +2,7 @@ package com.example.alquilerapp.data.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.util.UUID
 
 /**
  * Representa los datos de una habitación disponible para alquilar.
@@ -19,7 +20,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Habitacion(
-    val id: String,
+    val id: UUID,
     val titulo: String,
     val ciudad: String,
     val direccion: String,

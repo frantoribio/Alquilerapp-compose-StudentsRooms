@@ -48,7 +48,6 @@ import com.example.alquilerapp.data.model.Habitacion
 import com.example.alquilerapp.data.model.getEmulatedImageUrl
 import com.example.alquilerapp.viewmodel.PropietarioViewModel
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PropietarioScreen(
