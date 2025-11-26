@@ -4,7 +4,6 @@ import com.example.alquilerapp.data.model.LoginRequest
 import com.example.alquilerapp.data.model.LoginResponse
 import com.example.alquilerapp.data.model.Habitacion
 import com.example.alquilerapp.data.model.UploadResponse
-import com.example.alquilerapp.data.network.ApiService
 import com.example.alquilerapp.data.network.RetrofitClient
 import okhttp3.MultipartBody
 import retrofit2.Response

@@ -1,28 +1,11 @@
 package com.example.alquilerapp.ui.screens
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -36,38 +19,44 @@ import java.util.UUID
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditarHabitacionScreen(
-    context: Context = LocalContext.current,
     habitacionesViewModel: HabitacionesViewModel,
     navController: NavController,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
-    id: UUID,
+    modifier: Modifier = Modifier,
+    context: Context = LocalContext.current,
+    id: UUID?,
     onNavigateBack: () -> Unit
 ) {
-    var titulo: String? by remember { mutableStateOf("") }
-    var ciudad: String? by remember { mutableStateOf("") }
-    var direccion: String? by remember { mutableStateOf("") }
-    var precioMensual: Double? by remember { mutableStateOf(null) }
-    var descripcion: String? by remember { mutableStateOf("") }
-    var imagenesUrl: List<String> by remember { mutableStateOf(emptyList()) }
+    // Estado local para la UI
+    var titulo by remember { mutableStateOf("") }
+    var ciudad by remember { mutableStateOf("") }
+    var direccion by remember { mutableStateOf("") }
+    var precioMensual by remember { mutableStateOf("") }
+    var descripcion by remember { mutableStateOf("") }
+    var imagenesUrl by remember { mutableStateOf(emptyList<String>()) }
     var error by remember { mutableStateOf("") }
+
+    // Cargar datos iniciales
+    LaunchedEffect(id) {
+        val habitacion = habitacionesViewModel.obtenerHabitacionPorId(id!!)
+        habitacion?.let {
+            titulo = it.titulo
+            ciudad = it.ciudad
+            direccion = it.direccion
+            precioMensual = it.precioMensual.toString()
+            descripcion = it.descripcion
+            imagenesUrl = it.imagenesUrl
+        }
+    }
+
+    // Selector de imágenes
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
         uri?.let {
-            habitacionesViewModel.onImageSelected(context, uri)
-        }
-    }
-
-
-    LaunchedEffect(id) {
-        val habitacion = habitacionesViewModel.obtenerHabitacionPorId(id)
-        habitacion?.let { habitacion ->
-            titulo = habitacion.titulo
-            ciudad = habitacion.ciudad
-            direccion = habitacion.direccion
-            precioMensual = habitacion.precioMensual
-            descripcion = habitacion.descripcion
-            imagenesUrl = habitacion.imagenesUrl
+            val url = habitacionesViewModel.onImageSelected(context, it)
+            if (url != null) {
+                imagenesUrl = (imagenesUrl + url) as List<String>
+            }
         }
     }
 
@@ -81,54 +70,42 @@ fun EditarHabitacionScreen(
         Text("Editar Habitación", style = MaterialTheme.typography.headlineSmall)
         Spacer(Modifier.height(16.dp))
 
-        titulo?.let { it1 ->
-            OutlinedTextField(
-                value = it1,
-                onValueChange = { titulo = it; error = "" },
-                label = { Text("Título") },
-                singleLine = true
-            )
-        }
+        OutlinedTextField(
+            value = titulo,
+            onValueChange = { titulo = it; error = "" },
+            label = { Text("Título") },
+            singleLine = true
+        )
 
-        ciudad?.let { it1 ->
-            OutlinedTextField(
-                value = it1,
-                onValueChange = { ciudad = it; error = "" },
-                label = { Text("Ciudad") },
-                singleLine = true
-            )
-        }
+        OutlinedTextField(
+            value = ciudad,
+            onValueChange = { ciudad = it; error = "" },
+            label = { Text("Ciudad") },
+            singleLine = true
+        )
 
-        direccion?.let { it1 ->
-            OutlinedTextField(
-                value = it1,
-                onValueChange = { direccion = it; error = "" },
-                label = { Text("Dirección") },
-                singleLine = true
-            )
-        }
+        OutlinedTextField(
+            value = direccion,
+            onValueChange = { direccion = it; error = "" },
+            label = { Text("Dirección") },
+            singleLine = true
+        )
 
-        precioMensual?.let { it1 ->
-            OutlinedTextField(
-                value = it1.toString(),
-                onValueChange = {
-                    precioMensual = it.toDoubleOrNull()
-                    error = ""
-                },
-                label = { Text("Precio Mensual") },
-                singleLine = true
-            )
-        }
+        OutlinedTextField(
+            value = precioMensual,
+            onValueChange = { precioMensual = it; error = "" },
+            label = { Text("Precio Mensual") },
+            singleLine = true
+        )
 
-        descripcion?.let { it1 ->
-            OutlinedTextField(
-                value = it1,
-                onValueChange = { descripcion = it; error = "" },
-                label = { Text("Descripción") },
-                singleLine = true
-            )
-        }
+        OutlinedTextField(
+            value = descripcion,
+            onValueChange = { descripcion = it; error = "" },
+            label = { Text("Descripción") },
+            singleLine = true
+        )
 
+        Spacer(Modifier.height(8.dp))
         Button(
             onClick = { imagePickerLauncher.launch("image/*") },
             modifier = Modifier.fillMaxWidth()
@@ -146,28 +123,30 @@ fun EditarHabitacionScreen(
 
         Button(
             onClick = {
-                if (titulo?.isBlank() == true ||
-                    ciudad?.isBlank() == true ||
-                    direccion?.isBlank() == true ||
-                    precioMensual == null ||
-                    descripcion?.isBlank() == true
-                ) {
-                    error = "Todos los campos son obligatorios"
-                } else {
-                    scope.launch {
-                        habitacionesViewModel.actualizarHabitacion(
-                            id = id,
-                            habitacion = Habitacion(
-                                id = id,
-                                titulo = titulo!!,
-                                ciudad = ciudad!!,
-                                direccion = direccion!!,
-                                precioMensual = precioMensual!!,
-                                descripcion = descripcion!!,
-                                imagenesUrl = imagenesUrl
+                val precio = precioMensual.toDoubleOrNull()
+                when {
+                    titulo.isBlank() || ciudad.isBlank() || direccion.isBlank() || descripcion.isBlank() -> {
+                        error = "Todos los campos son obligatorios"
+                    }
+                    precio == null -> {
+                        error = "El precio debe ser numérico"
+                    }
+                    else -> {
+                        scope.launch {
+                            habitacionesViewModel.editarHabitacion(
+                                id = id!!,
+                                habitacion = Habitacion(
+                                    id = id,
+                                    titulo = titulo,
+                                    ciudad = ciudad,
+                                    direccion = direccion,
+                                    precioMensual = precio,
+                                    descripcion = descripcion,
+                                    imagenesUrl = imagenesUrl
+                                )
                             )
-                        )
-                        navController.popBackStack() // vuelve a la lista
+                            navController.popBackStack()
+                        }
                     }
                 }
             }
@@ -176,7 +155,7 @@ fun EditarHabitacionScreen(
         }
 
         Spacer(Modifier.height(16.dp))
-        Button(onClick = onNavigateBack) {
+        TextButton(onClick = onNavigateBack) {
             Text("Cancelar")
         }
     }

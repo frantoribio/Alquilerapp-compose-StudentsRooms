@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.alquilerapp.data.model.getEmulatedImageUrl
 import com.example.alquilerapp.viewmodel.HabitacionesViewModel
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.OutlinedTextField
@@ -48,6 +47,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
 import java.util.UUID
+
+
+
 
 
 /**
@@ -176,43 +178,6 @@ fun EstudianteScreen(
                         WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 64.dp
                     )
                 )
-            }
-        }
-    }
-}
-
-/**
- * función que muestra el panel de confirmación de reserva del estudiante
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ReservaConfirmadaScreen(
-    idHabitacion: String?,
-    onBack: () -> Unit // función para volver atrás
-) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Reserva Confirmada") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
-                    }
-                }
-            )
-        }
-    ) { padding ->
-        Surface(modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("Reserva confirmada", style = MaterialTheme.typography.headlineMedium)
-                Spacer(modifier = Modifier.height(8.dp))
-                Text("ID de habitación: ${idHabitacion ?: "Desconocido"}")
             }
         }
     }

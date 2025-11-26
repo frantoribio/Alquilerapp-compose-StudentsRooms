@@ -1,8 +1,11 @@
 package com.example.alquilerapp
 
+import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -17,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.alquilerapp.data.TokenStore
 import com.example.alquilerapp.data.network.ApiServiceBuilder
 import com.example.alquilerapp.repository.AlquilerRepository
+import com.example.alquilerapp.repository.ReservaRepository
 import com.example.alquilerapp.repository.UsuarioRepository
 import com.example.alquilerapp.ui.components.BottomBar
 import com.example.alquilerapp.ui.screens.*
@@ -26,6 +30,9 @@ import com.example.alquilerapp.viewmodel.HabitacionesViewModelFactory
 import com.example.alquilerapp.viewmodel.LoginViewModel
 import com.example.alquilerapp.viewmodel.PropietarioViewModel
 import com.example.alquilerapp.viewmodel.PropietarioViewModelFactory
+import com.example.alquilerapp.viewmodel.ReservaViewModelFactory
+import com.example.alquilerapp.viewmodel.ReservasViewModel
+//import com.example.alquilerapp.viewmodel.ReservasViewModel
 import com.example.alquilerapp.viewmodel.UsuariosViewModel
 import com.example.alquilerapp.viewmodel.UsuariosViewModelFactory
 import java.util.UUID
@@ -34,6 +41,8 @@ import java.util.UUID
  * MainActivity principal que configura la navegación y el tema de la aplicación.
  */
 class MainActivity : ComponentActivity() {
+    @SuppressLint("ViewModelConstructorInComposable")
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -43,9 +52,8 @@ class MainActivity : ComponentActivity() {
                     val habVM: HabitacionesViewModel = viewModel()
                     val loginVM: LoginViewModel = viewModel()
                     val onLogout: () -> Unit = {
-                        loginVM.logout() // 1. Llama al ViewModel para limpiar la sesión
+                        loginVM.logout()
                         navController.navigate("login") {
-                            // 2. Navega a 'login' y limpia TODA la pila para que no haya vuelta atrás
                             popUpTo("landing") { inclusive = true }
                             launchSingleTop = true
                         }
@@ -172,8 +180,6 @@ class MainActivity : ComponentActivity() {
                                     viewModel = habVM,
                                     onLogout = onLogout,
                                     onReservarClick = { idHabitacion ->
-                                        // Aquí defines qué hacer cuando el estudiante reserva
-                                        // Por ejemplo, navegar a una pantalla de confirmación:
                                         navController.navigate("reservaConfirmada/$idHabitacion")
                                     },
                                     modifier = Modifier.padding(padding)
@@ -184,7 +190,7 @@ class MainActivity : ComponentActivity() {
 
                         composable("reservaConfirmada/{idHabitacion}") { backStackEntry ->
                             val idHabitacion = backStackEntry.arguments?.getString("idHabitacion")
-                            ReservaConfirmadaScreen(
+                            ReservaScreen(
                                 idHabitacion = idHabitacion,
                                 onBack = { navController.popBackStack() }
                             )
@@ -231,7 +237,24 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("reservas") {
-                            //ReservasScreen(/* si tienes ViewModel o props, agrégalos aquí */)
+                            val reservaRepository = ReservaRepository(
+                                apiService = ApiServiceBuilder.create(tokenStore)
+                            )
+                            ReservasAdminScreen(
+                                viewModel = ReservasViewModel(reservaRepository),
+                                onBack = { navController.popBackStack() },
+                                onEditReserva = { reserva ->
+                                    navController.navigate("editar_reserva/${reserva.id}")
+                                },
+                                onDeleteReserva = { reserva ->
+
+
+
+                                }
+
+
+                            )
+
                         }
 
                         composable("editar_habitacion/{id}") { backStackEntry ->

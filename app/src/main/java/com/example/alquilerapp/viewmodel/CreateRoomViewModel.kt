@@ -121,7 +121,6 @@ class CreateRoomViewModel(
         }
     }
     fun onPriceChange(newValue: String) {
-        // Permite la entrada de números y el punto decimal
         if (newValue.all { it.isDigit() || it == '.' }) {
             roomPrice = newValue
         }
@@ -139,7 +138,7 @@ class CreateRoomViewModel(
             isSaving = true
             errorMessage = null
             try {
-                val token = TokenStore(context).getToken() // ← ahora dentro de la corrutina
+                val token = TokenStore(context).getToken()
                 val userId = getUserIdFromToken(token)
 
                 if (userId == null) {

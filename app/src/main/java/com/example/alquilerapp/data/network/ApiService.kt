@@ -5,6 +5,7 @@ import com.example.alquilerapp.data.model.LoginRequest
 import com.example.alquilerapp.data.model.LoginResponse
 import com.example.alquilerapp.data.model.RegistroRequest
 import com.example.alquilerapp.data.model.RegistroResponse
+import com.example.alquilerapp.data.model.Reserva
 import com.example.alquilerapp.data.model.UploadResponse
 import com.example.alquilerapp.data.model.Usuario
 import com.example.alquilerapp.data.model.dto.CrearHabitacionDto
@@ -60,6 +61,12 @@ interface ApiService {
     @PUT("usuarios/{id}")
     suspend fun actualizarUsuario(@Path("id") id: UUID, @Body usuario: Usuario): Response<Usuario>
 
+    @PUT("habitaciones/{id}")
+    suspend fun editarHabitacion(
+        @Path("id") id: UUID,
+        @Body habitacion: Habitacion
+    ): Response<Habitacion>
+
     @DELETE("usuarios/{id}")
     suspend fun eliminarUsuario(@Path("id") id: UUID): Response<Void>
 
@@ -85,14 +92,19 @@ interface ApiService {
     @DELETE("habitaciones/{id}")
     suspend fun eliminarHabitacion(@Path("id") id: UUID)
 
-    /*@PUT("habitaciones/{id}")
-    suspend fun editarHabitacion(@Path("id") id: UUID, @Body habitacion: Habitacion)
-*/
-    @PUT("habitaciones/{id}")
-    suspend fun editarHabitacion(
-        @Path("id") id: UUID,
-        @Body habitacion: Habitacion
-    ): Response<Habitacion>
+    @GET("reservas")
+    suspend fun listarReservas(): List<Reserva>
+
+    @POST("reservas")
+    suspend fun crearReserva(@Body reserva: Reserva): Response<Reserva>
+
+    @PUT("reservas/{id}")
+    suspend fun actualizarReserva(@Path("id") id: UUID, @Body reserva: Reserva): Response<Reserva>
+
+    @DELETE("reservas/{id}")
+    suspend fun eliminarReserva(@Path("id") id: UUID)
+
+
 
 
 }

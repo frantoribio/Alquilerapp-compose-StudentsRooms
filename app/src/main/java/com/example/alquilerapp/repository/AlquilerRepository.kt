@@ -9,7 +9,8 @@ import retrofit2.Response
 import java.util.UUID
 
 
-class AlquilerRepository(private val apiService: ApiService) {
+class AlquilerRepository(
+    private val apiService: ApiService) {
     suspend fun crearHabitacion(dto: CrearHabitacionDto): Habitacion {
         return apiService.crearHabitacion(dto)
     }

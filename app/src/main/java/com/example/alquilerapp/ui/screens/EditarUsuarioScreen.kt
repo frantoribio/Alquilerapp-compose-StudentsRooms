@@ -103,7 +103,7 @@ fun EditarUsuarioScreen(
         OutlinedTextField(
             value = contraseña,
             onValueChange = { contraseña = it; error = "" },
-            label = { Text("Contraseña (opcional)") }, // 🔹 aclaramos que es opcional
+            label = { Text("Contraseña (opcional)") },
             singleLine = true,
             visualTransformation = if (contraseñaVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
@@ -121,7 +121,7 @@ fun EditarUsuarioScreen(
             onExpandedChange = { expanded = !expanded }
         ) {
             OutlinedTextField(
-                value = rolSeleccionado?.name ?: "", // 🔹 mostramos el nombre del enum
+                value = rolSeleccionado?.name ?: "",
                 onValueChange = {},
                 readOnly = true,
                 label = { Text("Rol") },
@@ -155,7 +155,7 @@ fun EditarUsuarioScreen(
 
         Button(
             onClick = {
-                if (nombre?.isBlank() == true || email?.isBlank() == true || /*contraseña?.isBlank() == true ||*/ rolSeleccionado == null) {
+                if (nombre?.isBlank() == true || email?.isBlank() == true || rolSeleccionado == null) {
                     error = "Nombre, email y rol son obligatorios"
                 } else if (!esEmailValido(email)) {
                     error = "El email introducido no es válido"
@@ -168,10 +168,10 @@ fun EditarUsuarioScreen(
                                 nombre = nombre,
                                 email = email,
                                 contrasena = contraseña,
-                                rol = rolSeleccionado!! // 🔹 ya es Rol
+                                rol = rolSeleccionado!!
                             )
                         )
-                        navController.popBackStack() // vuelve a la lista
+                        navController.popBackStack()
                     }
                 }
             }

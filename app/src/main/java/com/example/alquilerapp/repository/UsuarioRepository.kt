@@ -7,7 +7,7 @@ import java.util.UUID
 
 class UsuarioRepository(private val apiService: ApiService) {
 
-    //private val api = RetrofitClient.instance
+    private val api = RetrofitClient.instance
 
     suspend fun obtenerUsuarios(): List<Usuario> {
         return apiService.listarUsuarios()

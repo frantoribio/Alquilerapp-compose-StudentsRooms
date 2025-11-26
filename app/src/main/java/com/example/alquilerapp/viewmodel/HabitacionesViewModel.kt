@@ -27,12 +27,13 @@ class HabitacionesViewModel(
     private val _habitaciones = MutableStateFlow<List<Habitacion>>(emptyList())
     val habitaciones: StateFlow<List<Habitacion>> = _habitaciones
     private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage
+
+
 
     fun editarHabitacion(habitacion: Habitacion, id: UUID) {
         viewModelScope.launch {
             try {
-                repo.editarHabitacion(id, habitacion)
+                alquilerRepo?.editarHabitacion(id, habitacion)
                 loadHabitaciones()
             } catch (e: Exception) {
                 _errorMessage.value = "Error al editar la habitación: ${e.message ?: "Desconocido"}"
@@ -72,18 +73,6 @@ class HabitacionesViewModel(
     }
 
 
-    fun actualizarHabitacion(id: UUID, habitacion: Habitacion) {
-        viewModelScope.launch {
-            try {
-                alquilerRepo?.actualizarHabitacion(id, habitacion)
-                loadHabitaciones()
-            } catch (e: Exception) {
-                _errorMessage.value =
-                    "Error al actualizar la habitación: ${e.message ?: "Desconocido"}"
-            }
-        }
-    }
-
     fun onImageSelected(context: Context, uri: Uri) {
         viewModelScope.launch {
             try {
@@ -110,4 +99,5 @@ class HabitacionesViewModel(
             }
         }
     }
+
 }
