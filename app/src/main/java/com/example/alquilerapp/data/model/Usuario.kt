@@ -5,6 +5,13 @@ import java.util.UUID
 
 /**
  * Clase que representa un usuario en la aplicación.
+ * @param id El identificador único del usuario.
+ * @param nombre El nombre del usuario.
+ * @param email El correo electrónico del usuario.
+ * @param contraseña La contraseña del usuario.
+ * @param rol El rol del usuario.
+ * @param habitacionesPublicadas Las habitaciones publicadas por el usuario.
+ * @param reservasRealizadas Las reservas realizadas por el usuario.
  */
 data class Usuario(
     val id: UUID? = null,

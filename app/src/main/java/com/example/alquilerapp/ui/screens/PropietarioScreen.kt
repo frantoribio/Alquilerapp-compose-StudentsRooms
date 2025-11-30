@@ -48,6 +48,17 @@ import com.example.alquilerapp.data.model.Habitacion
 import com.example.alquilerapp.data.model.getEmulatedImageUrl
 import com.example.alquilerapp.viewmodel.PropietarioViewModel
 
+/**
+ * Composable para la pantalla del propietario.
+ * @param onLogout Función para cerrar sesión.
+ * @param onNavigateToCreateRoom Función para navegar a la pantalla de creación de habitaciones.
+ * @param onEditRoom Función para editar una habitación.
+ * @param onDeleteRoom Función para eliminar una habitación.
+ * @param viewModel El ViewModel asociado a esta pantalla.
+ * @param modifier El modificador para personalizar el diseño.
+ * @param navController El controlador de navegación.
+ * @return El composable de la pantalla del propietario.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PropietarioScreen(

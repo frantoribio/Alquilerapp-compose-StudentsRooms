@@ -19,8 +19,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.alquilerapp.data.TokenStore
 import com.example.alquilerapp.data.network.ApiServiceBuilder
+import com.example.alquilerapp.data.network.RetrofitClient
 import com.example.alquilerapp.repository.AlquilerRepository
 import com.example.alquilerapp.repository.ReservaRepository
+////import com.example.alquilerapp.repository.ReservaRepository
 import com.example.alquilerapp.repository.UsuarioRepository
 import com.example.alquilerapp.ui.components.BottomBar
 import com.example.alquilerapp.ui.screens.*
@@ -30,8 +32,8 @@ import com.example.alquilerapp.viewmodel.HabitacionesViewModelFactory
 import com.example.alquilerapp.viewmodel.LoginViewModel
 import com.example.alquilerapp.viewmodel.PropietarioViewModel
 import com.example.alquilerapp.viewmodel.PropietarioViewModelFactory
-import com.example.alquilerapp.viewmodel.ReservaViewModelFactory
 import com.example.alquilerapp.viewmodel.ReservasViewModel
+//import com.example.alquilerapp.viewmodel.ReservaViewModelFactory
 //import com.example.alquilerapp.viewmodel.ReservasViewModel
 import com.example.alquilerapp.viewmodel.UsuariosViewModel
 import com.example.alquilerapp.viewmodel.UsuariosViewModelFactory
@@ -48,6 +50,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 Surface {
+                    val context = LocalContext.current
+                    val tokenStore = remember { TokenStore(context) }
+
+                    val apiService = remember { ApiServiceBuilder.create(tokenStore) }
+                    val alquilerRepository = remember { AlquilerRepository(apiService) }
+                    val viewModel: HabitacionesViewModel = viewModel(
+                        factory = HabitacionesViewModelFactory(alquilerRepository)
+                    )
                     val navController = rememberNavController()
                     val habVM: HabitacionesViewModel = viewModel()
                     val loginVM: LoginViewModel = viewModel()
@@ -58,10 +68,6 @@ class MainActivity : ComponentActivity() {
                             launchSingleTop = true
                         }
                     }
-                    val context = LocalContext.current
-                    val tokenStore = remember { TokenStore(context) }
-                    val apiService = remember { ApiServiceBuilder.create(tokenStore) }
-                    val alquilerRepository = remember { AlquilerRepository(apiService) }
                     val createRoomFactory = remember {
                         CreateRoomViewModelFactory(alquilerRepository)
                     }
@@ -70,10 +76,11 @@ class MainActivity : ComponentActivity() {
                     }
                     val usuariosVM: UsuariosViewModel = viewModel(factory = UsuariosViewModelFactory(UsuarioRepository(apiService)))
 
+
                     NavHost(navController = navController, startDestination = "landing") {
 
                         composable("landing") {
-                            LandingScreen(viewModel = habVM, onLoginClick = { navController.navigate("login") })
+                            LandingScreen(viewModel = viewModel, onLoginClick = { navController.navigate("login") })
                         }
 
                         composable("login") {
@@ -243,14 +250,11 @@ class MainActivity : ComponentActivity() {
                             ReservasAdminScreen(
                                 viewModel = ReservasViewModel(reservaRepository),
                                 onBack = { navController.popBackStack() },
-                                onEditReserva = { reserva ->
-                                    navController.navigate("editar_reserva/${reserva.id}")
-                                },
-                                onDeleteReserva = { reserva ->
 
-
-
+                                onDeleteReserva = {
                                 }
+                                )
+                            navController.navigate("reservas"
 
 
                             )
@@ -261,7 +265,7 @@ class MainActivity : ComponentActivity() {
                             val id = backStackEntry.arguments?.getString("id")?.let { UUID.fromString(it) }
                             if (id != null) {
                                 EditarHabitacionScreen(
-                                    habitacionesViewModel = habVM,
+                                    habitacionesViewModel = viewModel,
                                     navController = navController,
                                     modifier = Modifier,
                                     id = id,

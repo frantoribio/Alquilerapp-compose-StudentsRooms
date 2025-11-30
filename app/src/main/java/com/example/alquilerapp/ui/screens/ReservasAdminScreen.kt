@@ -13,13 +13,20 @@ import androidx.compose.ui.unit.dp
 import com.example.alquilerapp.data.model.Reserva
 import com.example.alquilerapp.viewmodel.ReservasViewModel
 
-
+/**
+ * Composable para la pantalla de gestión de reservas del administrador.
+ * @param viewModel El ViewModel asociado a esta pantalla.
+ * @param onBack Función para volver atrás.
+ * @param onEditReserva Función para editar una reserva.
+ * @param onDeleteReserva Función para eliminar una reserva.
+ * @return El composable de la pantalla de gestión de reservas del administrador.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReservasAdminScreen(
     viewModel: ReservasViewModel,
     onBack: () -> Unit,
-    onEditReserva: (Reserva) -> Unit,
+    //onEditReserva: (Reserva) -> Unit,
     onDeleteReserva: (Reserva) -> Unit
 ) {
     val reservas = viewModel.reservas
@@ -65,7 +72,7 @@ fun ReservasAdminScreen(
                                 OutlinedTextField(
                                     value = fechaFiltro,
                                     onValueChange = { fechaFiltro = it },
-                                    label = { Text("Fecha (YYYY-MM-DD)") },
+                                    label = { Text("Fecha (DD-MM-YYYY)") },
                                     modifier = Modifier.fillMaxWidth()
                                 )
                                 Spacer(Modifier.height(8.dp))

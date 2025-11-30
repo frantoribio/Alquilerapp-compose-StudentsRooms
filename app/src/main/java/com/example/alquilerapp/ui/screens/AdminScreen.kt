@@ -30,6 +30,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
+/**
+ * Composable para la pantalla de administración.
+ * @param navController El controlador de navegación.
+ * @param onLogout La función a ejecutar al cerrar sesión.
+ * @param modifier El modificador para personalizar el diseño.
+ * @return El composable de la pantalla de administración.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminScreen(navController: NavController,
@@ -75,6 +82,12 @@ fun AdminScreen(navController: NavController,
     }
 }
 
+/**
+ * Composable para una opción de administración.
+ * @param icon El icono de la opción.
+ * @param label El texto de la opción.
+ * @param onClick La función a ejecutar al hacer clic en la opción.
+ */
 @Composable
 fun AdminOption(icon: ImageVector, label: String, onClick: () -> Unit) {
     Card(

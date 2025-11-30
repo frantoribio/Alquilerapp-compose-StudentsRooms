@@ -12,6 +12,21 @@ import com.example.alquilerapp.repository.UsuarioRepository
 import kotlinx.coroutines.launch
 import java.util.UUID
 
+/**
+ * ViewModel para la pantalla de Usuarios
+ * @param usuarioRepository Repositorio para interactuar con la API
+ * @return UsuariosViewModel
+ * @property usuarios Lista de usuarios
+ * @property loading Indica si se está cargando
+ * @property errorMessage Mensaje de error en caso de que ocurra
+ * @property usuarioSeleccionado Usuario seleccionado
+ * @property cargarUsuarios Función para cargar usuarios
+ * @property eliminarUsuario Función para eliminar un usuario
+ * @property actualizarUsuario Función para actualizar un usuario
+ * @property seleccionarUsuario Función para seleccionar un usuario
+ * @property crearUsuario Función para crear un usuario
+ * @property obtenerUsuarioPorId Función para obtener un usuario por su ID
+ */
 class UsuariosViewModel(
     private val usuarioRepository: UsuarioRepository
 ) : ViewModel() {
@@ -28,8 +43,10 @@ class UsuariosViewModel(
     var usuarioSeleccionado by mutableStateOf<Usuario?>(null)
         private set
 
-
-
+    /**
+     * Carga los usuarios desde el repositorio.
+     * Se asume que el backend filtra por el usuario autenticado.
+     */
     fun cargarUsuarios() {
         viewModelScope.launch {
             loading = true
@@ -44,6 +61,10 @@ class UsuariosViewModel(
         }
     }
 
+    /**
+     * Elimina un usuario.
+     * @param id ID del usuario a eliminar.
+     */
     fun eliminarUsuario(id: UUID) {
         viewModelScope.launch {
             try {
@@ -56,6 +77,11 @@ class UsuariosViewModel(
         }
     }
 
+    /**
+     * Actualiza un usuario.
+     * @param id ID del usuario a actualizar.
+     * @param usuario Usuario actualizado.
+     */
     fun actualizarUsuario(id: UUID, usuario: Usuario) {
         viewModelScope.launch {
             try {
@@ -67,10 +93,23 @@ class UsuariosViewModel(
         }
     }
 
+    /**
+     * Selecciona un usuario.
+     * @param usuario Usuario seleccionado.
+     */
     fun seleccionarUsuario(usuario: Usuario) {
         usuarioSeleccionado = usuario
     }
 
+    /**
+     * Crea un usuario.
+     * @param nombre Nombre del usuario.
+     * @param email Email del usuario.
+     * @param contraseña Contraseña del usuario.
+     * @param rol Rol del usuario.
+     * @param onResult Callback para notificar el resultado de la operación.
+     * @return El resultado de la operación.
+     */
     fun crearUsuario(nombre: String?, email: String?, contraseña: String?, rol: String?, onResult: (Boolean, String) -> Unit) {
         viewModelScope.launch {
             try {
@@ -87,6 +126,11 @@ class UsuariosViewModel(
         }
     }
 
+    /**
+     * Obtiene un usuario por su ID.
+     * @param id ID del usuario a obtener.
+     * @return El usuario encontrado, o null si no se encuentra.
+     */
     fun obtenerUsuarioPorId(id: UUID): Usuario? {
         return usuarios.find { it.id == id }
     }

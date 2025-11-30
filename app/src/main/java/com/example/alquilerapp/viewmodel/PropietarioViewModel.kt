@@ -10,6 +10,22 @@ import com.example.alquilerapp.repository.AlquilerRepository
 import kotlinx.coroutines.launch
 import java.util.UUID
 
+/**
+ * ViewModel para la pantalla de habitaciones del propietario.
+ * @param repository Repositorio para interactuar con la API.
+ * @return El ViewModel para la pantalla de habitaciones del propietario.
+ * @property habitaciones Lista de habitaciones del propietario.
+ * @property isLoading Indica si se está cargando.
+ * @property errorMessage Mensaje de error en caso de que ocurra.
+ * @property cargarHabitacionesPropietario Función para cargar las habitaciones del propietario.
+ * @property eliminarHabitacion Función para eliminar una habitación.
+ * @property editarHabitacion Función para editar una habitación.
+ * @property repository Repositorio para interactuar con la API.
+ * @property isLoading Indica si se está cargando.
+ * @property eliminarHabitacion Función para eliminar una habitación.
+ * @property editarHabitacion Función para editar una habitación.
+ * @property viewModelScope Alcance del ViewModel.
+ */
 class PropietarioViewModel(
     private val repository: AlquilerRepository
 ) : ViewModel() {
@@ -42,6 +58,10 @@ class PropietarioViewModel(
         }
     }
 
+    /**
+     * Elimina una habitación.
+     * @param habitacionId ID de la habitación a eliminar.
+     */
     fun eliminarHabitacion(habitacionId: UUID) {
         viewModelScope.launch {
 
@@ -54,6 +74,12 @@ class PropietarioViewModel(
         }
     }
 
+    /**
+     * Edita una habitación.
+     * @param habitacionId ID de la habitación a editar.
+     * @param habitacion Habitación actualizada.
+     * @return Habitación actualizada.
+     */
     fun editarHabitacion(habitacionId: UUID, habitacion: Habitacion) {
         viewModelScope.launch {
             try {

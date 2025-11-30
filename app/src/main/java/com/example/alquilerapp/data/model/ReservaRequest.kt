@@ -1,5 +1,9 @@
 package com.example.alquilerapp.data.model
 
+/**
+ * Clase que representa la solicitud de una reserva.
+
+ */
 data class ReservaRequest (
     val habitacion: HabitacionId,
     val alumno: UsuarioId,

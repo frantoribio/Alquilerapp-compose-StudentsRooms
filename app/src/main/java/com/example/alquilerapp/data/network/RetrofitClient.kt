@@ -7,6 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 /**
  * Retrofit client singleton.
+ *
  */
 object RetrofitClient {
 

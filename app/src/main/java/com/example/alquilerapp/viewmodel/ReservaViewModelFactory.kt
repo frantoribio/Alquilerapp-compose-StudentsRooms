@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.alquilerapp.repository.ReservaRepository
 
-
+/**
+ * Fábrica para crear una instancia de ReservasViewModel
+ * ya que requiere una dependencia (ReservaRepository).
+ */
 class ReservaViewModelFactory(
     private val repository: ReservaRepository
 ) : ViewModelProvider.Factory {

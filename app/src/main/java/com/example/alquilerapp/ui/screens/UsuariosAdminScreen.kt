@@ -41,6 +41,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 
+/**
+ * Composable para la pantalla de gestión de usuarios del administrador.
+ * @param viewModel El ViewModel asociado a esta pantalla.
+ * @param onCrearUsuario Función para crear un nuevo usuario.
+ * @param onEditarUsuario Función para editar un usuario.
+ * @param onLogout Función para cerrar sesión.
+ * @param onBack Función para volver atrás.
+ * @param modifier El modificador para personalizar el diseño.
+ * @return El composable de la pantalla de gestión de usuarios del administrador.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UsuariosAdminScreen(

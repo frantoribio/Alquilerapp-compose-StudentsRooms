@@ -47,6 +47,9 @@ class TokenStore(private val context: Context) {
         }
     }
 
+    /**
+     * Obtiene el token almacenado en las preferencias compartidas.
+     */
     suspend fun getToken() : String? {
         return context.dataStore.data.map { prefs ->
             prefs[TOKEN_KEY]

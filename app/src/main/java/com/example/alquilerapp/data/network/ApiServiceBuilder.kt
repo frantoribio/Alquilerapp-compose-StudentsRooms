@@ -8,9 +8,16 @@ import com.example.alquilerapp.data.TokenStore
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 
+/**
+ * Builder para crear una instancia de ApiService con un interceptor de autenticación.
+ */
 object ApiServiceBuilder {
     private const val BASE_URL = "http://10.0.2.2:8080/api/"
 
+    /**
+     * Crea una instancia de ApiService con un interceptor de autenticación.
+     *
+     */
     fun create(tokenStore: TokenStore): ApiService {
         val tokenProvider: () -> String? = {
             runBlocking {
@@ -21,6 +28,11 @@ object ApiServiceBuilder {
         return create(interceptor)
     }
 
+    /**
+     * Crea una instancia de ApiService con un interceptor de autenticación.
+     *
+     * @param authInterceptor El interceptor de autenticación a utilizar.
+     */
     fun create(authInterceptor: AuthInterceptor): ApiService {
         val client = OkHttpClient.Builder()
             .addInterceptor(authInterceptor)

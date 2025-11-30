@@ -6,13 +6,23 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.alquilerapp.data.model.Reserva
-import com.example.alquilerapp.data.model.ReservaRequest
-import com.example.alquilerapp.data.network.RetrofitClient
 import com.example.alquilerapp.repository.ReservaRepository
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.util.UUID
 
+/**
+ * ViewModel para la pantalla de Reservas
+ * @param reservaRepository Repositorio para interactuar con la API
+ * @return ReservasViewModel
+ * @property reservas Lista de reservas
+ * @property loading Indica si se está cargando
+ * @property errorMessage Mensaje de error en caso de que ocurra
+ * @property reservaSeleccionada Reserva seleccionada
+ * @property loadReservas Función para cargar reservas
+ * @property eliminarReserva Función para eliminar una reserva
+ * @property actualizarReserva Función para actualizar una reserva
+ */
 class ReservasViewModel(
     private val reservaRepository: ReservaRepository
 ) : ViewModel() {

@@ -4,6 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.alquilerapp.repository.AlquilerRepository
 
+/**
+ * Fábrica para crear una instancia de PropietarioViewModel
+ * ya que requiere una dependencia (AlquilerRepository).
+ */
 class PropietarioViewModelFactory(
     private val repository: AlquilerRepository
 ) : ViewModelProvider.Factory {

@@ -48,12 +48,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
 import java.util.UUID
 
-
-
-
-
 /**
  * función que muestra el panel de estudiante
+ * @param viewModel HabitacionesViewModel
+ * @param onLogout función que se ejecuta al cerrar sesión
+ * @param onReservarClick función que se ejecuta al hacer click en el botón de reservar
+ * @param modifier modificador para personalizar el diseño
+ *
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -18,6 +18,11 @@ import androidx.compose.material.icons.filled.VisibilityOff
 
 /**
  * Pantalla de inicio de sesión.
+ * @param viewModel El ViewModel asociado a esta pantalla.
+ * @param onRoleNavigate Función para navegar a la pantalla correspondiente al rol.
+ * @param onNavigateToRegistro Función para navegar a la pantalla de registro.
+ * @param modifier El modificador para personalizar el diseño.
+ * @return El composable de la pantalla de inicio de sesión.
  */
 @Composable
 fun LoginScreen(

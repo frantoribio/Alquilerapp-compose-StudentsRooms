@@ -10,18 +10,22 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.alquilerapp.data.network.ApiService
-import com.example.alquilerapp.data.network.RetrofitClientReserva
-import com.example.alquilerapp.repository.ReservaRepository
-import com.example.alquilerapp.viewmodel.ReservaViewModelFactory
-import com.example.alquilerapp.viewmodel.ReservasViewModel
+//import com.example.alquilerapp.data.network.RetrofitClientReserva
+//import com.example.alquilerapp.repository.ReservaRepository
+//import com.example.alquilerapp.viewmodel.ReservaViewModelFactory
+//import com.example.alquilerapp.viewmodel.ReservasViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+/**
+ * Composable para la pantalla de reservas.
+ * @param idHabitacion El ID de la habitación a reservar.
+ * @param onBack Función para volver atrás.
+ * @return El composable de la pantalla de reservas.
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,7 +44,7 @@ fun ReservaScreen(
             }
         }
     )
-
+    var habitacionId by remember { mutableStateOf<String?>(null) }
     var fechaEntrada by remember { mutableStateOf<LocalDate?>(null) }
     var fechaSalida by remember { mutableStateOf<LocalDate?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -98,7 +102,7 @@ fun ReservaScreen(
                         }
                     }
                 }
-
+                habitacionId?.let { Text("Habitación: $it") }
                 fechaEntrada?.let { Text("Entrada: ${it.format(formatter)}") }
                 fechaSalida?.let { Text("Salida: ${it.format(formatter)}") }
 
@@ -122,7 +126,7 @@ fun ReservaScreen(
                         Spacer(modifier = Modifier.width(16.dp))
                     }
 
-                    val apiService = RetrofitClientReserva.reservaApi
+                    /*val apiService = RetrofitClientReserva.reservaApi
 
                     val viewModel: ReservasViewModel = viewModel(
                         factory = ReservaViewModelFactory(ReservaRepository(apiService as ApiService))
@@ -145,7 +149,7 @@ fun ReservaScreen(
                         }) {
                             Text("Confirmar Reserva")
                         }
-                    }
+                    }*/
                 }
             }
         }

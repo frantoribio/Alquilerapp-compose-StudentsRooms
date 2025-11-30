@@ -39,6 +39,15 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import com.example.alquilerapp.data.model.Rol
 
+/**
+ * Composable para la pantalla de edición de usuarios.
+ * @param usuariosViewModel El ViewModel de usuarios.
+ * @param navController El controlador de navegación.
+ * @param modifier El modificador para personalizar el diseño.
+ * @param id El identificador del usuario a editar.
+ * @param onNavigateBack La función a ejecutar al navegar hacia atrás.
+ * @return El composable de la pantalla de edición de usuarios.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditarUsuarioScreen(

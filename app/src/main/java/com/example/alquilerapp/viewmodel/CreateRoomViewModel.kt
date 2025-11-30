@@ -20,6 +20,33 @@ import java.io.File
 import java.util.UUID
 import kotlin.let
 
+/**
+ * ViewModel para la creación de habitaciones.
+ * @param repository Repositorio para interactuar con la API.
+ * @return El ViewModel para la creación de habitaciones.
+ * @property roomTitle Título de la habitación.
+ * @property roomCity Ciudad de la habitación.
+ * @property roomAddress Dirección de la habitación.
+ * @property roomPrice Precio de la habitación.
+ * @property roomDescription Descripción de la habitación.
+ * @property imageUrl URL de la imagen de la habitación.
+ * @property isSaving Indica si la habitación está siendo guardada.
+ * @property saveSuccess Indica si la habitación se guardó correctamente.
+ * @property errorMessage Mensaje de error en caso de que ocurra.
+ * @property habitacionActual Habitación actual.
+ * @property onTitleChange Función para cambiar el título de la habitación.
+ * @property onCityChange Función para cambiar la ciudad de la habitación.
+ * @property onAddressChange Función para cambiar la dirección de la habitación.
+ * @property onDescriptionChange Función para cambiar la descripción de la habitación.
+ * @property onImageUrlChange Función para cambiar la URL de la imagen de la habitación.
+ * @property onImageSelected Función para seleccionar una imagen para la habitación.
+ * @property onPriceChange Función para cambiar el precio de la habitación.
+ * @property createRoom Función para crear una nueva habitación.
+ * @property getUserIdFromToken Función para obtener el ID del usuario a partir de un token.
+ * @property cargarHabitacionPorId Función para cargar una habitación por su ID.
+ * @property actualizarHabitacion Función para actualizar una habitación existente.
+ * @property eliminarHabitacion Función para eliminar una habitación.
+ */
 class CreateRoomViewModel(
     private val repository: AlquilerRepository
 ) : ViewModel() {
@@ -44,6 +71,10 @@ class CreateRoomViewModel(
     var habitacionActual: Habitacion? = null
         private set
 
+    /**
+     * Carga una habitación por su ID.
+     * @param id ID de la habitación a cargar.
+     */
     fun cargarHabitacionPorId(id: UUID) {
         viewModelScope.launch {
             try {
@@ -54,10 +85,19 @@ class CreateRoomViewModel(
         }
     }
 
+    /**
+     * Actualiza una habitación existente.
+     * @param habitacion Habitación a actualizar.
+     * @return Habitación actualizada.
+     */
     private fun obtenerHabitacionPorId(id: UUID): Habitacion? {
         return habitacionActual
     }
 
+    /**
+     * Actualiza una habitación existente.
+     * @param habitacion Habitación a actualizar.
+     */
     fun actualizarHabitacion(habitacion: Habitacion) {
         viewModelScope.launch {
             try {
@@ -68,6 +108,10 @@ class CreateRoomViewModel(
         }
     }
 
+    /**
+     * Actualiza una habitación existente.
+     * @param habitacion Habitación a actualizar.
+     */
     fun eliminarHabitacion(id: UUID) {
         viewModelScope.launch {
             try {
@@ -78,6 +122,10 @@ class CreateRoomViewModel(
         }
     }
 
+    /**
+     * Elimina una habitación.
+     * @param id ID de la habitación a eliminar.
+     */
     private fun AlquilerRepository.eliminarHabitacion(id: UUID) {}
 
     fun onTitleChange(newValue: String) { roomTitle = newValue }

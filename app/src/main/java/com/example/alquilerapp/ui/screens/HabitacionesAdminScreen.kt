@@ -1,6 +1,5 @@
 package com.example.alquilerapp.ui.screens
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -35,7 +34,12 @@ import com.example.alquilerapp.data.model.Habitacion
 import com.example.alquilerapp.data.model.getEmulatedImageUrl
 
 /**
- * Composable para la pantalla inicial.
+ * Composable para la pantalla de gestión de habitaciones del administrador.
+ * @param viewModel El ViewModel asociado a esta pantalla.
+ * @param onBack Función para volver atrás.
+ * @param onEditRoom Función para editar una habitación.
+ * @param onDeleteRoom Función para eliminar una habitación.
+ * @return El composable de la pantalla de gestión de habitaciones del administrador.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

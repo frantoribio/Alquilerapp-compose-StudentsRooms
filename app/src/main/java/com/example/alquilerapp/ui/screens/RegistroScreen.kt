@@ -39,6 +39,10 @@ import kotlinx.coroutines.launch
  * Pantalla de registro de usuario.
  *
  * @param registroViewModel El ViewModel para manejar la lógica del registro.
+ * @param navController El controlador de navegación.
+ * @param modifier El modificador para personalizar el diseño.
+ * @param onNavigateBack Función para navegar de vuelta a la pantalla de inicio de sesión.
+ * @return El composable de la pantalla de registro de usuario.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

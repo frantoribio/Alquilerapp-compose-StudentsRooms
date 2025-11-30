@@ -25,6 +25,7 @@ import androidx.activity.result.contract.ActivityResultContracts
  * @param viewModel El ViewModel asociado a esta pantalla.
  * @param onRoomCreated Función para volver atrás al éxito.
  * @param onBack Función para volver atrás.
+ * @return El composable de la creación de una nueva habitación.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

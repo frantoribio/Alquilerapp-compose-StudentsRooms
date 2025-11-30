@@ -35,6 +35,14 @@ import androidx.navigation.NavController
 import com.example.alquilerapp.viewmodel.UsuariosViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Composable para la pantalla de creación de usuarios.
+ * @param usuariosViewModel El ViewModel de usuarios.
+ * @param navController El controlador de navegación.
+ * @param modifier El modificador para personalizar el diseño.
+ * @param onNavigateBack La función a ejecutar al navegar hacia atrás.
+ * @return El composable de la pantalla de creación de usuarios.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CrearUsuarioScreen(

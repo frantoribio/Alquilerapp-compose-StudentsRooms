@@ -5,8 +5,17 @@ import org.json.JSONObject
 
 /**
  * Clase de utilidad para operaciones relacionadas con JWTs.
+ * Proporciona métodos para extraer información del token JWT.
+ * @return El valor del claim o null si no se encuentra.
  */
 object JwtUtils {
+
+    /**
+     * Extrae un claim (atributo) del token JWT.
+     * @param token El token JWT.
+     * @param claim El nombre del claim a extraer.
+     * @return El valor del claim o null si no se encuentra.
+     */
     fun extractClaim(token: String, claim: String): String? {
         try {
             val parts = token.split('.')

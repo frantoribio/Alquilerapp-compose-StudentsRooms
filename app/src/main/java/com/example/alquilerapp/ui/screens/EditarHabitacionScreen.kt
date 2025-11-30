@@ -1,8 +1,6 @@
 package com.example.alquilerapp.ui.screens
 
 import android.content.Context
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -16,6 +14,16 @@ import com.example.alquilerapp.viewmodel.HabitacionesViewModel
 import kotlinx.coroutines.launch
 import java.util.UUID
 
+/**
+ * Composable para la pantalla de edición de habitaciones.
+ * @param habitacionesViewModel El ViewModel de habitaciones.
+ * @param navController El controlador de navegación.
+ * @param modifier El modificador para personalizar el diseño.
+ * @param context El contexto de la aplicación.
+ * @param id El identificador de la habitación a editar.
+ * @param onNavigateBack La función a ejecutar al navegar hacia atrás.
+ * @return El composable de la pantalla de edición de habitaciones.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditarHabitacionScreen(
@@ -26,7 +34,6 @@ fun EditarHabitacionScreen(
     id: UUID?,
     onNavigateBack: () -> Unit
 ) {
-    // Estado local para la UI
     var titulo by remember { mutableStateOf("") }
     var ciudad by remember { mutableStateOf("") }
     var direccion by remember { mutableStateOf("") }
@@ -34,10 +41,14 @@ fun EditarHabitacionScreen(
     var descripcion by remember { mutableStateOf("") }
     var imagenesUrl by remember { mutableStateOf(emptyList<String>()) }
     var error by remember { mutableStateOf("") }
+    val habitacion by habitacionesViewModel.habitacionSeleccionada.collectAsState()
 
-    // Cargar datos iniciales
     LaunchedEffect(id) {
-        val habitacion = habitacionesViewModel.obtenerHabitacionPorId(id!!)
+        habitacionesViewModel.cargarHabitacion(id!!)
+    }
+
+    LaunchedEffect(habitacion) {
+        //val habitacion = habitacionesViewModel.obtenerHabitacionPorId(id!!)
         habitacion?.let {
             titulo = it.titulo
             ciudad = it.ciudad
@@ -45,18 +56,6 @@ fun EditarHabitacionScreen(
             precioMensual = it.precioMensual.toString()
             descripcion = it.descripcion
             imagenesUrl = it.imagenesUrl
-        }
-    }
-
-    // Selector de imágenes
-    val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri ->
-        uri?.let {
-            val url = habitacionesViewModel.onImageSelected(context, it)
-            if (url != null) {
-                imagenesUrl = (imagenesUrl + url) as List<String>
-            }
         }
     }
 
@@ -105,14 +104,6 @@ fun EditarHabitacionScreen(
             singleLine = true
         )
 
-        Spacer(Modifier.height(8.dp))
-        Button(
-            onClick = { imagePickerLauncher.launch("image/*") },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Seleccionar imagen desde el dispositivo")
-        }
-
         if (error.isNotBlank()) {
             Spacer(Modifier.height(8.dp))
             Text(error, color = MaterialTheme.colorScheme.error)
@@ -145,6 +136,7 @@ fun EditarHabitacionScreen(
                                     imagenesUrl = imagenesUrl
                                 )
                             )
+                            navController.previousBackStackEntry?.savedStateHandle?.set("shouldRefresh", true)
                             navController.popBackStack()
                         }
                     }

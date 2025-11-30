@@ -33,6 +33,9 @@ import java.text.Normalizer
 
 /**
  * Composable para la pantalla inicial.
+ * @param viewModel El ViewModel asociado a esta pantalla.
+ * @param onLoginClick Función para navegar a la pantalla de inicio de sesión.
+ * @return El composable de la pantalla inicial.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -137,6 +140,10 @@ fun LandingScreen(viewModel: HabitacionesViewModel, onLoginClick: () -> Unit) {
     }
 }
 
+/**
+ * Función de extensión para normalizar una cadena de texto.
+ * @return La cadena de texto normalizada.
+ */
 fun String.normalizado(): String {
     return Normalizer.normalize(this, Normalizer.Form.NFD)
         .replace("\\p{InCombiningDiacriticalMarks}+".toRegex(), "")
