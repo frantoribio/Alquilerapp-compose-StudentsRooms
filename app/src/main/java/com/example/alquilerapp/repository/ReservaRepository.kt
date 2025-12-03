@@ -44,7 +44,8 @@ class ReservaRepository(private val apiService: ApiService) {
      * elimina una reserva en la api
      * @param id el id de la reserva a eliminar
      */
-    suspend fun eliminarReserva(id: UUID) {
+    suspend fun eliminarReserva(id: UUID?) {
         apiService.eliminarReserva(id)
     }
+
 }

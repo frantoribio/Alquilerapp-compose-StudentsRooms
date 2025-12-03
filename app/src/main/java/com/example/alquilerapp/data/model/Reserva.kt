@@ -1,14 +1,15 @@
 package com.example.alquilerapp.data.model
 
-import java.util.UUID
-
 /**
  * Clase que representa una reserva.
  *
  */
 data class Reserva(
-    val id: UUID? = null,
+    val id: String? = null,
     val fechaInicio: String? = null,
     val fechaFin: String? = null,
-    val habitacionId: UUID? = null
+    val habitacionId: String? = null,
+    val alumnoId: String? = null,
+    val estadoReserva: String? = null
+
 )

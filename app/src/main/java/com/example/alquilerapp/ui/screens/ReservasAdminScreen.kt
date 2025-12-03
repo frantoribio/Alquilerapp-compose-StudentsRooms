@@ -2,12 +2,14 @@ package com.example.alquilerapp.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.alquilerapp.data.model.Reserva
@@ -26,13 +28,12 @@ import com.example.alquilerapp.viewmodel.ReservasViewModel
 fun ReservasAdminScreen(
     viewModel: ReservasViewModel,
     onBack: () -> Unit,
-    //onEditReserva: (Reserva) -> Unit,
+    onEditReserva: (Reserva) -> Unit,
     onDeleteReserva: (Reserva) -> Unit
 ) {
     val reservas = viewModel.reservas
     val loading = viewModel.loading
     val error = viewModel.errorMessage
-
 
     var expanded by remember { mutableStateOf(false) }
     var ciudadFiltro by remember { mutableStateOf("") }
@@ -41,12 +42,9 @@ fun ReservasAdminScreen(
     var showDialog by remember { mutableStateOf(false) }
     var reservaAEliminar by remember { mutableStateOf<Reserva?>(null) }
 
-
-
     LaunchedEffect(Unit) {
         viewModel.loadReservas()
     }
-
 
     Scaffold(
         topBar = {
@@ -72,7 +70,7 @@ fun ReservasAdminScreen(
                                 OutlinedTextField(
                                     value = fechaFiltro,
                                     onValueChange = { fechaFiltro = it },
-                                    label = { Text("Fecha (DD-MM-YYYY)") },
+                                    label = { Text("Fecha (YYYY-MM-DD)") },
                                     modifier = Modifier.fillMaxWidth()
                                 )
                                 Spacer(Modifier.height(8.dp))
@@ -84,12 +82,8 @@ fun ReservasAdminScreen(
                                         ciudadFiltro = ""
                                         fechaFiltro = ""
                                         expanded = false
-                                    }) {
-                                        Text("Limpiar")
-                                    }
-                                    Button(onClick = { expanded = false }) {
-                                        Text("Aplicar")
-                                    }
+                                    }) { Text("Limpiar") }
+                                    Button(onClick = { expanded = false }) { Text("Aplicar") }
                                 }
                             }
                         }
@@ -101,47 +95,64 @@ fun ReservasAdminScreen(
             )
         }
     ) { padding ->
-        LazyColumn(contentPadding = padding, modifier = Modifier.fillMaxSize()) {
-            items(reservas.size) { res ->
-                var expandedCard by remember { mutableStateOf(false) }
+        when {
+            loading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            }
+            error != null -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Error: $error", color = MaterialTheme.colorScheme.error)
+                }
+            }
+            else -> {
+                LazyColumn(contentPadding = padding, modifier = Modifier.fillMaxSize()) {
+                    items(reservas) { reserva ->
+                        var expandedCard by remember { mutableStateOf(false) }
 
-                Card(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(4.dp),
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text("Fecha de entrada: ")
-                        Text("Fecha de salida: ")
-
-
-                        Spacer(Modifier.height(16.dp))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End
+                        Card(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .fillMaxWidth(),
+                            elevation = CardDefaults.cardElevation(4.dp),
                         ) {
-                            IconButton(onClick = { expandedCard = true }) {
-                                Icon(Icons.Default.MoreVert, contentDescription = "Opciones")
-                            }
-                            DropdownMenu(
-                                expanded = expandedCard,
-                                onDismissRequest = { expandedCard = false }
-                            ) {
-                                DropdownMenuItem(
-                                    text = { Text("Editar") },
-                                    onClick = {
-                                        expandedCard = false
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text("ID: ${reserva.id}")
+                                Text("Habitación: ${reserva.habitacionId}")
+                                Text("Fecha de entrada: ${reserva.fechaInicio}")
+                                Text("Fecha de salida: ${reserva.fechaFin}")
+
+                                Spacer(Modifier.height(16.dp))
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    IconButton(onClick = { expandedCard = true }) {
+                                        Icon(Icons.Default.MoreVert, contentDescription = "Opciones")
                                     }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Eliminar") },
-                                    onClick = {
-                                        expandedCard = false
-                                        showDialog = true
+                                    DropdownMenu(
+                                        expanded = expandedCard,
+                                        onDismissRequest = { expandedCard = false }
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = { Text("Editar") },
+                                            onClick = {
+                                                expandedCard = false
+                                                onEditReserva(reserva)
+                                            }
+                                        )
+                                        DropdownMenuItem(
+                                            text = { Text("Eliminar") },
+                                            onClick = {
+                                                expandedCard = false
+                                                reservaAEliminar = reserva
+                                                showDialog = true
+                                            }
+                                        )
                                     }
-                                )
+                                }
                             }
                         }
                     }
@@ -153,21 +164,15 @@ fun ReservasAdminScreen(
             AlertDialog(
                 onDismissRequest = { showDialog = false },
                 title = { Text("Confirmar eliminación") },
-                text = {
-                    Text("¿Seguro que deseas eliminar la reserva de ${reservaAEliminar!!} ?")
-                },
+                text = { Text("¿Seguro que deseas eliminar la reserva de ${reservaAEliminar!!.id}?") },
                 confirmButton = {
                     Button(onClick = {
                         onDeleteReserva(reservaAEliminar!!)
                         showDialog = false
-                    }) {
-                        Text("Sí, eliminar")
-                    }
+                    }) { Text("Sí, eliminar") }
                 },
                 dismissButton = {
-                    Button(onClick = { showDialog = false }) {
-                        Text("Cancelar")
-                    }
+                    Button(onClick = { showDialog = false }) { Text("Cancelar") }
                 }
             )
         }

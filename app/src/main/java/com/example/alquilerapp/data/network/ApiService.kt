@@ -185,7 +185,7 @@ interface ApiService {
      * @param id El identificador único de la reserva a eliminar.
      */
     @DELETE("reservas/{id}")
-    suspend fun eliminarReserva(@Path("id") id: UUID)
+    suspend fun eliminarReserva(@Path("id") id: UUID?)
 
 }
 

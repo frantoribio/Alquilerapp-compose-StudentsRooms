@@ -178,6 +178,8 @@ fun AppNavHost(
         composable("reservaConfirmada/{idHabitacion}") { backStackEntry ->
             val idHabitacion = backStackEntry.arguments?.getString("idHabitacion")
             ReservaScreen(
+                apiService = ApiServiceBuilder.create(tokenStore),
+                viewModel = viewModel(),
                 idHabitacion = idHabitacion,
                 onBack = { navController.popBackStack() }
             )
@@ -222,7 +224,7 @@ fun AppNavHost(
             )
         }
 
-        composable("reservas") {
+        /*composable("reservas") {
             val reservaRepository = ReservaRepository(
                 apiService = ApiServiceBuilder.create(tokenStore)
             )
@@ -230,15 +232,20 @@ fun AppNavHost(
                 viewModel = ReservasViewModel(reservaRepository),
                 onBack = { navController.popBackStack() },
 
-                onDeleteReserva = {
+                onEditReserva = { reserva ->
+                    navController.navigate("editar_reserva/${reserva.id}")
+                },
+                onDeleteReserva = { reserva ->
+                    reservaRepository.eliminarReserva(reserva.id)
                 }
             )
+
             navController.navigate("reservas"
 
 
             )
 
-        }
+        }*/
 
         composable("editar_habitacion/{id}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")?.let { UUID.fromString(it) }

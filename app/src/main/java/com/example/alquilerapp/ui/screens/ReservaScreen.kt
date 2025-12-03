@@ -10,6 +10,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.alquilerapp.data.model.Usuario
+import com.example.alquilerapp.data.model.UsuarioId
+import com.example.alquilerapp.data.model.dto.UsuarioDTO
+import com.example.alquilerapp.data.network.ApiService
+import com.example.alquilerapp.repository.ReservaRepository
+import com.example.alquilerapp.viewmodel.ReservaViewModelFactory
+import com.example.alquilerapp.viewmodel.ReservasViewModel
 //import com.example.alquilerapp.data.network.RetrofitClientReserva
 //import com.example.alquilerapp.repository.ReservaRepository
 //import com.example.alquilerapp.viewmodel.ReservaViewModelFactory
@@ -19,6 +27,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import java.util.UUID
 
 /**
  * Composable para la pantalla de reservas.
@@ -30,7 +39,8 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReservaScreen(
-
+    apiService: ApiService,
+    viewModel: ReservasViewModel,
     idHabitacion: String?,
     onBack: () -> Unit
 ) {
@@ -126,10 +136,10 @@ fun ReservaScreen(
                         Spacer(modifier = Modifier.width(16.dp))
                     }
 
-                    /*val apiService = RetrofitClientReserva.reservaApi
+
 
                     val viewModel: ReservasViewModel = viewModel(
-                        factory = ReservaViewModelFactory(ReservaRepository(apiService as ApiService))
+                        factory = ReservaViewModelFactory(ReservaRepository(apiService))
                     )
 
 
@@ -137,19 +147,25 @@ fun ReservaScreen(
                         Button(onClick = {
                             idHabitacion?.let {
 
-                                viewModel.confirmarReserva(
-                                    habitacionId = it,
-                                    alumnoId = "", // lo obtienes del login
-                                    entrada = fechaEntrada!!,
+                                /*viewModel.crearReserva(
+                                    habitacionId = UUID.fromString(it),
+                                    usuarioId = UUID.fromString(it),
+                                    entrada = fechaEntrada,
                                     salida = fechaSalida!!,
-                                    estadoReserva = "PENDIENTE"
-                                )
+                                    onResult = { success, message ->
+                                        if (success) {
+                                            onBack()
+                                        } else {
+                                            error = message
+                                        }
+                                    }
+                                )*/
                             }
 
                         }) {
                             Text("Confirmar Reserva")
                         }
-                    }*/
+                    }
                 }
             }
         }

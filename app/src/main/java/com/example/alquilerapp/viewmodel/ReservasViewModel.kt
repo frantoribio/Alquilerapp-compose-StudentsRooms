@@ -5,11 +5,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.alquilerapp.data.model.HabitacionId
 import com.example.alquilerapp.data.model.Reserva
+import com.example.alquilerapp.data.model.ReservaRequest
+import com.example.alquilerapp.data.model.UsuarioId
+import com.example.alquilerapp.data.network.RetrofitClient
 import com.example.alquilerapp.repository.ReservaRepository
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.util.UUID
+
+
 
 /**
  * ViewModel para la pantalla de Reservas
@@ -40,6 +46,8 @@ class ReservasViewModel(
         private set
 
 
+
+
     fun loadReservas() {
         viewModelScope.launch {
             loading = true
@@ -54,7 +62,7 @@ class ReservasViewModel(
         }
     }
 
-    fun eliminarReserva(id: UUID) {
+    fun eliminarReserva(id: UUID?) {
         viewModelScope.launch {
             try {
                 reservaRepository.eliminarReserva(id)
@@ -64,6 +72,8 @@ class ReservasViewModel(
             }
         }
     }
+
+
 
     fun actualizarReserva(id: UUID, reserva: Reserva) {
         viewModelScope.launch {
@@ -81,54 +91,66 @@ class ReservasViewModel(
     }
 
 
-    fun crearReserva(
-        habitacionId: UUID,
-        usuarioId: UUID,
-        entrada: String,
-        salida: String,
+    /*fun crearReserva(
+        habitacionId: String,
+        usuarioId: String,
+        entrada: LocalDate?,
+        salida: LocalDate,
         onResult: (Boolean, String) -> Unit
     ) {
         viewModelScope.launch {
             try {
+                val reserva = Reserva(
+                    id = habitacionId,
+                    fechaInicio = entrada,
+                    fechaFin = salida,
+                    habitacionId = habitacionId,
+                    alumnoId = usuarioId,
+                    estadoReserva = "PENDIENTE"
+                )
+                reservaRepository.crearReserva(reserva)
+                onResult(true, "Reserva creada exitosamente")
 
             } catch (e: Exception) {
                 onResult(false, "Excepción: ${e.message}")
             }
-        }
-    }
+        }*/
 
 
-    fun obtenerReservaPorId(id: UUID): Reserva? {
+
+    /*fun obtenerReservaPorId(id: String): Reserva? {
         return reservas.find { it.id == id }
-    }
 
-    fun confirmarReserva(
+
+    }*/
+
+   /* fun confirmarReserva(
         habitacionId: String,
         alumnoId: String,
-        entrada: LocalDate,
-        salida: LocalDate,
+        entrada: String,
+        salida: String,
         estadoReserva: String
     ) {
         viewModelScope.launch {
-            /*try {
+            try {
                 val reservaRequest = ReservaRequest(
-                    habitacion = habitacionId,
-                    alumnoId = alumnoId,
+                    habitacion = HabitacionId(habitacionId),
+                    alumno = UsuarioId(alumnoId),
                     fechaInicio = entrada,
                     fechaFin = salida,
-                    entrada = entrada,
-                    salida = salida,
-                    estadoReserva = "PENDIENTE"
+                    estadoReserva = estadoReserva
                 )
 
-                val response = RetrofitClient.instance.confirmarReserva(reservaRequest)
+                val response = RetrofitClient.instance.crearReserva(reservaRequest)
                 if (response.isSuccessful) {
                     val reserva = response.body()
                 }
-            } catch (e: Exception) {*/
+            } catch (e: Exception) {
+                errorMessage = "Error al confirmar reserva: ${e.message}"
+            }
 
         }
-    }
+    }*/
 }
 
 

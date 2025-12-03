@@ -19,7 +19,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.alquilerapp.data.TokenStore
 import com.example.alquilerapp.data.network.ApiServiceBuilder
-import com.example.alquilerapp.data.network.RetrofitClient
 import com.example.alquilerapp.repository.AlquilerRepository
 import com.example.alquilerapp.repository.ReservaRepository
 ////import com.example.alquilerapp.repository.ReservaRepository
@@ -32,6 +31,7 @@ import com.example.alquilerapp.viewmodel.HabitacionesViewModelFactory
 import com.example.alquilerapp.viewmodel.LoginViewModel
 import com.example.alquilerapp.viewmodel.PropietarioViewModel
 import com.example.alquilerapp.viewmodel.PropietarioViewModelFactory
+import com.example.alquilerapp.viewmodel.ReservaViewModelFactory
 import com.example.alquilerapp.viewmodel.ReservasViewModel
 //import com.example.alquilerapp.viewmodel.ReservaViewModelFactory
 //import com.example.alquilerapp.viewmodel.ReservasViewModel
@@ -75,6 +75,12 @@ class MainActivity : ComponentActivity() {
                         PropietarioViewModelFactory(alquilerRepository)
                     }
                     val usuariosVM: UsuariosViewModel = viewModel(factory = UsuariosViewModelFactory(UsuarioRepository(apiService)))
+
+
+
+                    val reservaVM: ReservasViewModel = viewModel(factory = ReservaViewModelFactory(ReservaRepository(apiService)))
+
+
 
 
                     NavHost(navController = navController, startDestination = "landing") {
@@ -198,6 +204,8 @@ class MainActivity : ComponentActivity() {
                         composable("reservaConfirmada/{idHabitacion}") { backStackEntry ->
                             val idHabitacion = backStackEntry.arguments?.getString("idHabitacion")
                             ReservaScreen(
+                                apiService = apiService,
+                                viewModel = reservaVM,
                                 idHabitacion = idHabitacion,
                                 onBack = { navController.popBackStack() }
                             )
@@ -244,21 +252,16 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("reservas") {
-                            val reservaRepository = ReservaRepository(
-                                apiService = ApiServiceBuilder.create(tokenStore)
-                            )
                             ReservasAdminScreen(
-                                viewModel = ReservasViewModel(reservaRepository),
+                                viewModel = reservaVM,
                                 onBack = { navController.popBackStack() },
-
-                                onDeleteReserva = {
+                                onEditReserva = { reserva ->
+                                    navController.navigate("editar_reserva/${reserva.id}")
+                                },
+                                onDeleteReserva = { reserva ->
+                                    reservaVM.eliminarReserva(reserva.id as UUID?)
                                 }
-                                )
-                            navController.navigate("reservas"
-
-
                             )
-
                         }
 
                         composable("editar_habitacion/{id}") { backStackEntry ->
