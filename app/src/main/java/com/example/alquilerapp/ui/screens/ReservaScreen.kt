@@ -10,13 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.alquilerapp.data.model.Usuario
-import com.example.alquilerapp.data.model.UsuarioId
-import com.example.alquilerapp.data.model.dto.UsuarioDTO
 import com.example.alquilerapp.data.network.ApiService
-import com.example.alquilerapp.repository.ReservaRepository
-import com.example.alquilerapp.viewmodel.ReservaViewModelFactory
 import com.example.alquilerapp.viewmodel.ReservasViewModel
 //import com.example.alquilerapp.data.network.RetrofitClientReserva
 //import com.example.alquilerapp.repository.ReservaRepository
@@ -27,7 +21,6 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import java.util.UUID
 
 /**
  * Composable para la pantalla de reservas.
@@ -39,27 +32,23 @@ import java.util.UUID
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReservaScreen(
-    apiService: ApiService,
-    viewModel: ReservasViewModel,
+    //apiService: ApiService,
+    viewModel: ReservasViewModel, // 👈 ya contiene el alumnoId del login
     idHabitacion: String?,
     onBack: () -> Unit
 ) {
     val todayMillis = Instant.now().toEpochMilli()
-
     val datePickerState = rememberDatePickerState(
         selectableDates = object : SelectableDates {
             override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                // 🔹 Solo permitir fechas >= hoy
                 return utcTimeMillis >= todayMillis
             }
         }
     )
-    var habitacionId by remember { mutableStateOf<String?>(null) }
     var fechaEntrada by remember { mutableStateOf<LocalDate?>(null) }
     var fechaSalida by remember { mutableStateOf<LocalDate?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
-
-    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         .withLocale(Locale("es", "ES"))
 
     Scaffold(
@@ -86,15 +75,14 @@ fun ReservaScreen(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Selecciona tu rango de fechas", style = MaterialTheme.typography.headlineMedium)
+                Text("Selecciona tu rango de fechas",
+                    style = MaterialTheme.typography.headlineMedium)
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // 🔹 Calendario scrollable con restricción
                 DatePicker(state = datePickerState)
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Procesar selección
                 val selectedMillis = datePickerState.selectedDateMillis
                 val selectedDate = selectedMillis?.let {
                     Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
@@ -112,7 +100,8 @@ fun ReservaScreen(
                         }
                     }
                 }
-                habitacionId?.let { Text("Habitación: $it") }
+
+                idHabitacion?.let { Text("Habitación: $it") }
                 fechaEntrada?.let { Text("Entrada: ${it.format(formatter)}") }
                 fechaSalida?.let { Text("Salida: ${it.format(formatter)}") }
 
@@ -136,32 +125,16 @@ fun ReservaScreen(
                         Spacer(modifier = Modifier.width(16.dp))
                     }
 
-
-
-                    val viewModel: ReservasViewModel = viewModel(
-                        factory = ReservaViewModelFactory(ReservaRepository(apiService))
-                    )
-
-
                     if (fechaEntrada != null && fechaSalida != null && error == null) {
                         Button(onClick = {
-                            idHabitacion?.let {
-
-                                /*viewModel.crearReserva(
-                                    habitacionId = UUID.fromString(it),
-                                    usuarioId = UUID.fromString(it),
-                                    entrada = fechaEntrada,
-                                    salida = fechaSalida!!,
-                                    onResult = { success, message ->
-                                        if (success) {
-                                            onBack()
-                                        } else {
-                                            error = message
-                                        }
-                                    }
-                                )*/
+                            idHabitacion?.let { habId ->
+                                viewModel.confirmarReserva(
+                                    habitacionId = habId,
+                                    entrada = fechaEntrada!!.toString(),
+                                    salida = fechaSalida!!.toString(),
+                                    estadoReserva = "PENDIENTE"
+                                )
                             }
-
                         }) {
                             Text("Confirmar Reserva")
                         }

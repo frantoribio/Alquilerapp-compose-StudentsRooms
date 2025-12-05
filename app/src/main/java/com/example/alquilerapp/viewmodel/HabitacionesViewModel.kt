@@ -81,7 +81,6 @@ class HabitacionesViewModel(
     private val _habitacionSeleccionada = MutableStateFlow<Habitacion?>(null)
     val habitacionSeleccionada: StateFlow<Habitacion?> = _habitacionSeleccionada
 
-
     fun editarHabitacion(habitacion: Habitacion, id: UUID) {
         viewModelScope.launch {
             try {
@@ -101,8 +100,6 @@ class HabitacionesViewModel(
                 _errorMessage.value = "Error al editar: ${e.message}"
                 Log.e("HabitacionesViewModel", "Excepción al editar", e)
             }
-
-
         }
     }
 
@@ -136,7 +133,6 @@ class HabitacionesViewModel(
     fun obtenerHabitacionPorId(id: UUID): Habitacion? {
         return habitaciones.value.find { it.id == id }
     }
-
 
     fun onImageSelected(context: Context, uri: Uri) {
         viewModelScope.launch {

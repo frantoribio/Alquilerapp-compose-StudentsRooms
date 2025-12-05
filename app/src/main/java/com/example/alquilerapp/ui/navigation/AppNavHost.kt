@@ -14,21 +14,19 @@ import androidx.navigation.compose.composable
 import com.example.alquilerapp.data.TokenStore
 import com.example.alquilerapp.data.network.ApiServiceBuilder
 import com.example.alquilerapp.repository.AlquilerRepository
-import com.example.alquilerapp.repository.ReservaRepository
 import com.example.alquilerapp.ui.components.BottomBar
 import com.example.alquilerapp.ui.screens.AdminScreen
 import com.example.alquilerapp.ui.screens.CrearUsuarioScreen
 import com.example.alquilerapp.ui.screens.CreateRoomScreen
 import com.example.alquilerapp.ui.screens.EditarHabitacionScreen
 import com.example.alquilerapp.ui.screens.EditarUsuarioScreen
-import com.example.alquilerapp.ui.screens.EstudianteScreen
+import com.example.alquilerapp.ui.screens.EstudianteHabitacionesScreen
 import com.example.alquilerapp.ui.screens.HabitacionesAdminScreen
 import com.example.alquilerapp.ui.screens.LandingScreen
 import com.example.alquilerapp.ui.screens.LoginScreen
 import com.example.alquilerapp.ui.screens.PropietarioScreen
 import com.example.alquilerapp.ui.screens.RegistroScreen
 import com.example.alquilerapp.ui.screens.ReservaScreen
-import com.example.alquilerapp.ui.screens.ReservasAdminScreen
 import com.example.alquilerapp.ui.screens.UsuariosAdminScreen
 import com.example.alquilerapp.viewmodel.CreateRoomViewModelFactory
 import com.example.alquilerapp.viewmodel.HabitacionesViewModel
@@ -36,7 +34,6 @@ import com.example.alquilerapp.viewmodel.HabitacionesViewModelFactory
 import com.example.alquilerapp.viewmodel.LoginViewModel
 import com.example.alquilerapp.viewmodel.PropietarioViewModel
 import com.example.alquilerapp.viewmodel.PropietarioViewModelFactory
-import com.example.alquilerapp.viewmodel.ReservasViewModel
 import com.example.alquilerapp.viewmodel.UsuariosViewModel
 import java.util.UUID
 
@@ -163,13 +160,14 @@ fun AppNavHost(
             Scaffold(
                 bottomBar = { BottomBar(navController) }
             ) { padding ->
-                EstudianteScreen(
+                EstudianteHabitacionesScreen(
                     viewModel = habVM,
                     onLogout = onLogout,
                     onReservarClick = { idHabitacion ->
                         navController.navigate("reservaConfirmada/$idHabitacion")
                     },
-                    modifier = Modifier.padding(padding)
+                    modifier = Modifier.padding(padding),
+                    onBack = { navController.navigate("alumno") }
 
                 )
             }
@@ -178,7 +176,7 @@ fun AppNavHost(
         composable("reservaConfirmada/{idHabitacion}") { backStackEntry ->
             val idHabitacion = backStackEntry.arguments?.getString("idHabitacion")
             ReservaScreen(
-                apiService = ApiServiceBuilder.create(tokenStore),
+                //apiService = ApiServiceBuilder.create(tokenStore),
                 viewModel = viewModel(),
                 idHabitacion = idHabitacion,
                 onBack = { navController.popBackStack() }

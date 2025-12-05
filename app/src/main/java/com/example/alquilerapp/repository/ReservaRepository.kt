@@ -1,8 +1,10 @@
 package com.example.alquilerapp.repository
 
 import com.example.alquilerapp.data.model.Reserva
+import com.example.alquilerapp.data.model.ReservaRequest
 import com.example.alquilerapp.data.network.ApiService
 import com.example.alquilerapp.data.network.RetrofitClient
+import retrofit2.Response
 import java.util.UUID
 
 /**
@@ -18,7 +20,7 @@ class ReservaRepository(private val apiService: ApiService) {
      * obtiene las reservas de la api
      * @return las reservas de la api
      */
-    suspend fun obtenerReservas(): List<Reserva> {
+    suspend fun obtenerReservas(): Response<List<Reserva>> {
         return apiService.listarReservas()
     }
 
@@ -27,8 +29,9 @@ class ReservaRepository(private val apiService: ApiService) {
      * @param reserva la reserva a crear
      * @return la reserva creada
      */
-    suspend fun crearReserva(reserva: Reserva) {
-        apiService.crearReserva(reserva)
+
+    suspend fun crearReserva(reserva: ReservaRequest): Response<Reserva> {
+        return apiService.crearReserva(reserva)
     }
 
     /**
@@ -47,5 +50,4 @@ class ReservaRepository(private val apiService: ApiService) {
     suspend fun eliminarReserva(id: UUID?) {
         apiService.eliminarReserva(id)
     }
-
 }

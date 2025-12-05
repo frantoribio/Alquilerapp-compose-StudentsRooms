@@ -34,5 +34,4 @@ class LoginRepository {
     suspend fun login(email: String, password: String): Response<LoginResponse> {
         return api.login(LoginRequest(email, password))
     }
-
 }

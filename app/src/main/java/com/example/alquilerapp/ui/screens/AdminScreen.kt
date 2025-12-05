@@ -56,7 +56,6 @@ fun AdminScreen(navController: NavController,
             }
         )
 
-
         Column(
             modifier = Modifier
                 .fillMaxSize()

@@ -5,14 +5,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.alquilerapp.data.model.HabitacionId
 import com.example.alquilerapp.data.model.Reserva
 import com.example.alquilerapp.data.model.ReservaRequest
 import com.example.alquilerapp.data.model.UsuarioId
-import com.example.alquilerapp.data.network.RetrofitClient
 import com.example.alquilerapp.repository.ReservaRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.util.UUID
 
 
@@ -30,7 +31,8 @@ import java.util.UUID
  * @property actualizarReserva Función para actualizar una reserva
  */
 class ReservasViewModel(
-    private val reservaRepository: ReservaRepository
+    private val reservaRepository: ReservaRepository,
+    private val loginViewModel: LoginViewModel
 ) : ViewModel() {
 
     var reservas by mutableStateOf<List<Reserva>>(emptyList())
@@ -45,15 +47,25 @@ class ReservasViewModel(
     var reservaSeleccionada by mutableStateOf<Reserva?>(null)
         private set
 
+    private val _alumnoId = MutableStateFlow<String?>(null)
+    val alumnoId: StateFlow<String?> = _alumnoId
 
-
+    fun setAlumnoId(id: String) {
+        _alumnoId.value = id
+    }
 
     fun loadReservas() {
         viewModelScope.launch {
             loading = true
             errorMessage = null
             try {
-                reservas = reservaRepository.obtenerReservas()
+                val response = reservaRepository.obtenerReservas()
+                if (response.isSuccessful) {
+                    reservas = response.body() ?: emptyList()
+                } else {
+                    errorMessage = "Error al cargar reservas: ${response.code()}"
+                }
+
             } catch (e: Exception) {
                 errorMessage = "Error al cargar reservas: ${e.message}"
             } finally {
@@ -73,8 +85,6 @@ class ReservasViewModel(
         }
     }
 
-
-
     fun actualizarReserva(id: UUID, reserva: Reserva) {
         viewModelScope.launch {
             try {
@@ -90,47 +100,15 @@ class ReservasViewModel(
         reservaSeleccionada = reserva
     }
 
-
-    /*fun crearReserva(
+    // ✅ Confirmar reserva limpio
+    fun confirmarReserva(
         habitacionId: String,
-        usuarioId: String,
-        entrada: LocalDate?,
-        salida: LocalDate,
-        onResult: (Boolean, String) -> Unit
-    ) {
-        viewModelScope.launch {
-            try {
-                val reserva = Reserva(
-                    id = habitacionId,
-                    fechaInicio = entrada,
-                    fechaFin = salida,
-                    habitacionId = habitacionId,
-                    alumnoId = usuarioId,
-                    estadoReserva = "PENDIENTE"
-                )
-                reservaRepository.crearReserva(reserva)
-                onResult(true, "Reserva creada exitosamente")
-
-            } catch (e: Exception) {
-                onResult(false, "Excepción: ${e.message}")
-            }
-        }*/
-
-
-
-    /*fun obtenerReservaPorId(id: String): Reserva? {
-        return reservas.find { it.id == id }
-
-
-    }*/
-
-   /* fun confirmarReserva(
-        habitacionId: String,
-        alumnoId: String,
         entrada: String,
         salida: String,
         estadoReserva: String
     ) {
+        val alumnoId = loginViewModel.alumnoId.value ?: return
+
         viewModelScope.launch {
             try {
                 val reservaRequest = ReservaRequest(
@@ -141,17 +119,41 @@ class ReservasViewModel(
                     estadoReserva = estadoReserva
                 )
 
-                val response = RetrofitClient.instance.crearReserva(reservaRequest)
+                val response = reservaRepository.crearReserva(reservaRequest)
                 if (response.isSuccessful) {
                     val reserva = response.body()
+                    if (reserva != null) {
+                        loadReservas()
+                    } else {
+                        errorMessage = "Error al confirmar reserva: Respuesta nula"
+                    }
+                } else {
+                    loadReservas()
+                    errorMessage = "Error al confirmar reserva: ${response.code()}"
                 }
+
+
             } catch (e: Exception) {
                 errorMessage = "Error al confirmar reserva: ${e.message}"
             }
+        }
+    }
 
+   /* fun getReservasByHabitacion(habitacionId: String): List<Reserva> {
+        var reservas = reservas
+        if (reservas.isEmpty()) {
+            reservas = loadReservas().toMutableList()
+        }
+
+        return reservas.filter {
+            it.habitacion.id.toString() == habitacionId
+        }
+    }
+
+    fun getReservasByAlumno(alumnoId: String): List<Reserva> {
+        return reservas.filter {
+            it.alumno.id.toString() == alumnoId
         }
     }*/
 }
-
-
 

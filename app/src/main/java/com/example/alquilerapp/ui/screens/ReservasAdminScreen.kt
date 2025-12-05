@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.alquilerapp.data.model.Reserva
 import com.example.alquilerapp.viewmodel.ReservasViewModel
+import java.util.UUID
 
 /**
  * Composable para la pantalla de gestión de reservas del administrador.
@@ -29,16 +30,14 @@ fun ReservasAdminScreen(
     viewModel: ReservasViewModel,
     onBack: () -> Unit,
     onEditReserva: (Reserva) -> Unit,
-    onDeleteReserva: (Reserva) -> Unit
+    onDeleteReserva: (Reserva) -> Unit = { reserva -> viewModel.eliminarReserva(reserva.id as UUID?) }
 ) {
     val reservas = viewModel.reservas
     val loading = viewModel.loading
     val error = viewModel.errorMessage
-
     var expanded by remember { mutableStateOf(false) }
     var ciudadFiltro by remember { mutableStateOf("") }
     var fechaFiltro by remember { mutableStateOf("") }
-
     var showDialog by remember { mutableStateOf(false) }
     var reservaAEliminar by remember { mutableStateOf<Reserva?>(null) }
 

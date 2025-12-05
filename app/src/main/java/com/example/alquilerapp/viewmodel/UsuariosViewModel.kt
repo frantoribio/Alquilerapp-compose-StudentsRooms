@@ -33,13 +33,10 @@ class UsuariosViewModel(
 
     var usuarios by mutableStateOf<List<Usuario>>(emptyList())
         private set
-
     var loading by mutableStateOf(false)
         private set
-
     var errorMessage by mutableStateOf<String?>(null)
         private set
-
     var usuarioSeleccionado by mutableStateOf<Usuario?>(null)
         private set
 

@@ -57,5 +57,4 @@ class AlquilerRepository(
     suspend fun editarHabitacion(id: UUID, habitacion: Habitacion): Response<Habitacion> {
         return apiService.editarHabitacion(id, habitacion)
     }
-
 }

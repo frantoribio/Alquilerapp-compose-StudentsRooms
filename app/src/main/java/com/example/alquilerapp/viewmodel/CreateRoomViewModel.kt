@@ -80,7 +80,7 @@ class CreateRoomViewModel(
             try {
                 habitacionActual = obtenerHabitacionPorId(id)
             } catch (e: Exception) {
-
+                errorMessage = "Error al cargar la habitación: ${e.message ?: "Error desconocido"}"
             }
         }
     }
@@ -103,7 +103,7 @@ class CreateRoomViewModel(
             try {
                 actualizarHabitacion(habitacion)
             } catch (e: Exception) {
-
+                errorMessage = "Error al actualizar la habitación: ${e.message ?: "Error desconocido"}"
             }
         }
     }
@@ -117,7 +117,7 @@ class CreateRoomViewModel(
             try {
                 repository.eliminarHabitacion(id)
             } catch (e: Exception) {
-
+                errorMessage = "Error al eliminar la habitación: ${e.message ?: "Error desconocido"}"
             }
         }
     }
@@ -155,8 +155,8 @@ class CreateRoomViewModel(
                 val requestFile = tempFile.asRequestBody("image/*".toMediaTypeOrNull())
                 val imagePart = MultipartBody.Part.createFormData("image", tempFile.name, requestFile)
                 val userIdPart = MultipartBody.Part.createFormData("userId", userId)
-
                 val response = repository.uploadImage(imagePart, userIdPart)
+
                 if (response.isSuccessful) {
                     val imageUrl = response.body()?.url ?: ""
                     onImageUrlChange(imageUrl)
@@ -196,7 +196,6 @@ class CreateRoomViewModel(
                 }
 
                 val imagesList = if (imageUrl.isNotBlank()) listOf(imageUrl) else emptyList()
-
                 val roomDto = CrearHabitacionDto(
                     titulo = roomTitle,
                     ciudad = roomCity,

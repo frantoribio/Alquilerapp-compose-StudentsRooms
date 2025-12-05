@@ -9,5 +9,4 @@ data class ReservaResponse (
     val fechaInicio: String,
     val fechaFin: String,
     val estadoReserva: String
-
 )

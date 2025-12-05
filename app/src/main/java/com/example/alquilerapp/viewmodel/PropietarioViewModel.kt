@@ -64,7 +64,6 @@ class PropietarioViewModel(
      */
     fun eliminarHabitacion(habitacionId: UUID) {
         viewModelScope.launch {
-
             try {
                 repository.eliminarHabitacion(habitacionId)
                 habitaciones = repository.getHabitacionesPropietario()

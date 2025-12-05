@@ -9,14 +9,14 @@ import com.example.alquilerapp.repository.ReservaRepository
  * ya que requiere una dependencia (ReservaRepository).
  */
 class ReservaViewModelFactory(
-    private val repository: ReservaRepository
+    private val repository: ReservaRepository,
+    private val loginViewModel: LoginViewModel
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ReservasViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return ReservasViewModel(repository) as T
+            return ReservasViewModel(repository, loginViewModel) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
-

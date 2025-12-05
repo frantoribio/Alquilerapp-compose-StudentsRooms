@@ -1,62 +1,78 @@
 package com.example.alquilerapp.ui.screens
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.example.alquilerapp.viewmodel.HabitacionesViewModel
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.filled.MoreVert
-import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import com.example.alquilerapp.data.model.getEmulatedImageUrl
+import com.example.alquilerapp.viewmodel.HabitacionesViewModel
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
-import com.example.alquilerapp.data.model.Habitacion
-import com.example.alquilerapp.data.model.getEmulatedImageUrl
+import java.util.UUID
 
 /**
- * Composable para la pantalla de gestión de habitaciones del administrador.
- * @param viewModel El ViewModel asociado a esta pantalla.
- * @param onBack Función para volver atrás.
- * @param onEditRoom Función para editar una habitación.
- * @param onDeleteRoom Función para eliminar una habitación.
- * @return El composable de la pantalla de gestión de habitaciones del administrador.
+ * función que muestra el panel de estudiante
+ * @param viewModel HabitacionesViewModel
+ * @param onLogout función que se ejecuta al cerrar sesión
+ * @param onReservarClick función que se ejecuta al hacer click en el botón de reservar
+ * @param modifier modificador para personalizar el diseño
+ *
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HabitacionesAdminScreen(
+fun EstudianteHabitacionesScreen(
     viewModel: HabitacionesViewModel,
-    onBack: () -> Unit,
-    onEditRoom: (Habitacion) -> Unit,
-    onDeleteRoom: (Habitacion) -> Unit
+    onLogout: () -> Unit,
+    onReservarClick: (idHabitacion: UUID) -> Unit,
+    modifier: Modifier = Modifier,
+    onBack: () -> Unit
+
 ) {
     val habitaciones by viewModel.habitaciones.collectAsState()
+
     var expanded by remember { mutableStateOf(false) }
     var ciudadFiltro by remember { mutableStateOf("") }
     var precioMaximo by remember { mutableStateOf("") }
-    var showDialog by remember { mutableStateOf(false) }
-    var habitacionAEliminar by remember { mutableStateOf<Habitacion?>(null) }
 
-    LaunchedEffect(Unit) {
+    androidx.compose.runtime.LaunchedEffect(Unit) {
         viewModel.loadHabitaciones()
     }
 
@@ -68,8 +84,10 @@ fun HabitacionesAdminScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Gestión de Habitaciones") },
+
+                title = { Text("Encuentra habitaciones") },
                 actions = {
+
                     Box {
                         IconButton(onClick = { expanded = true }) {
                             Icon(Icons.Default.FilterList, contentDescription = "Filtrar")
@@ -118,11 +136,11 @@ fun HabitacionesAdminScreen(
                 }
             )
         }
+
+
     ) { padding ->
         LazyColumn(contentPadding = padding, modifier = Modifier.fillMaxSize()) {
             items(habitacionesFiltradas) { hab ->
-                var expandedCard by remember { mutableStateOf(false) }
-
                 Card(
                     modifier = Modifier
                         .padding(8.dp)
@@ -140,69 +158,31 @@ fun HabitacionesAdminScreen(
                         )
                         Spacer(Modifier.height(16.dp))
                         Text(hab.ciudad, style = MaterialTheme.typography.headlineLarge)
-                        Spacer(Modifier.height(4.dp))
+                        Spacer(Modifier.height(16.dp))
                         Text(hab.direccion, style = MaterialTheme.typography.headlineLarge)
                         Spacer(Modifier.height(4.dp))
                         Text("Precio: €${hab.precioMensual} / mes")
                         Spacer(Modifier.height(8.dp))
                         Text(hab.descripcion)
-
                         Spacer(Modifier.height(16.dp))
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End
+                        Button(
+                            onClick = { onReservarClick(hab.id) },
+                            modifier = Modifier.align(Alignment.End)
                         ) {
-                            IconButton(onClick = { expandedCard = true }) {
-                                Icon(Icons.Default.MoreVert, contentDescription = "Opciones")
-                            }
-                            DropdownMenu(
-                                expanded = expandedCard,
-                                onDismissRequest = { expandedCard = false }
-                            ) {
-                                DropdownMenuItem(
-                                    text = { Text("Editar") },
-                                    onClick = {
-                                        expandedCard = false
-                                        onEditRoom(hab)
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Eliminar") },
-                                    onClick = {
-                                        expandedCard = false
-                                        habitacionAEliminar = hab
-                                        showDialog = true
-                                    }
-                                )
-                            }
+                            Text("Reservar")
                         }
                     }
                 }
-            }
-        }
 
-        if (showDialog && habitacionAEliminar != null) {
-            AlertDialog(
-                onDismissRequest = { showDialog = false },
-                title = { Text("Confirmar eliminación") },
-                text = {
-                    Text("¿Estás seguro de que deseas eliminar la habitación \"${habitacionAEliminar!!.titulo}\"?")
-                },
-                confirmButton = {
-                    Button(onClick = {
-                        onDeleteRoom(habitacionAEliminar!!)
-                        showDialog = false
-                    }) {
-                        Text("Sí, eliminar")
-                    }
-                },
-                dismissButton = {
-                    Button(onClick = { showDialog = false }) {
-                        Text("Cancelar")
-                    }
-                }
-            )
+            }
+            item {
+                Spacer(
+                    modifier = Modifier.height(
+                        WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 64.dp
+                    )
+                )
+            }
         }
     }
 }

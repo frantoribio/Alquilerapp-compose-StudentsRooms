@@ -6,6 +6,7 @@ import com.example.alquilerapp.data.model.LoginResponse
 import com.example.alquilerapp.data.model.RegistroRequest
 import com.example.alquilerapp.data.model.RegistroResponse
 import com.example.alquilerapp.data.model.Reserva
+import com.example.alquilerapp.data.model.ReservaRequest
 import com.example.alquilerapp.data.model.UploadResponse
 import com.example.alquilerapp.data.model.Usuario
 import com.example.alquilerapp.data.model.dto.CrearHabitacionDto
@@ -158,7 +159,7 @@ interface ApiService {
      * @return Una lista de reservas.
      */
     @GET("reservas")
-    suspend fun listarReservas(): List<Reserva>
+    suspend fun listarReservas(): Response<List<Reserva>>
 
     /**
      * Crea una nueva reserva.
@@ -167,7 +168,7 @@ interface ApiService {
      * @return Una respuesta que contiene la reserva creada.
      */
     @POST("reservas")
-    suspend fun crearReserva(@Body reserva: Reserva): Response<Reserva>
+    suspend fun crearReserva(@Body reserva: ReservaRequest): Response<Reserva>
 
     /**
      * Actualiza los datos de una reserva existente.

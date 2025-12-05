@@ -46,7 +46,8 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     val loading: StateFlow<Boolean> = _loading
     private val _loginError = MutableStateFlow<String?>(null)
     val loginError: StateFlow<String?> = _loginError
-
+    private val _alumnoId = MutableStateFlow<String?>(null)
+    val alumnoId: StateFlow<String?> = _alumnoId
 
     /**
      * Inicia sesión con las credenciales proporcionadas.
@@ -65,6 +66,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                     val body = resp.body()
                     val token = body?.token
                     var role = body?.rol
+                    val id = body?.id
                     if (!token.isNullOrEmpty() && role.isNullOrBlank()) {
                         val extracted = JwtUtils.extractClaim(token, "role") ?: JwtUtils.extractClaim(token, "roles")
                         if (!extracted.isNullOrBlank()) role = extracted
@@ -73,6 +75,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                         store.saveToken(token, role)
                         Log.d("LoginViewModel", "Token guardado: $token, rol: $role")
                         _role.value = role
+                        _alumnoId.value = id
                     } else {
                         _loginError.value = "Token inválido o faltante"
                     }
