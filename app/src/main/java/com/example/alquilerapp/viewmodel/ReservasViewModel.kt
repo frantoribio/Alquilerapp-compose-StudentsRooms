@@ -10,6 +10,7 @@ import com.example.alquilerapp.data.model.HabitacionId
 import com.example.alquilerapp.data.model.Reserva
 import com.example.alquilerapp.data.model.ReservaRequest
 import com.example.alquilerapp.data.model.UsuarioId
+import com.example.alquilerapp.data.network.RetrofitClient
 import com.example.alquilerapp.repository.ReservaRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -46,6 +47,39 @@ class ReservasViewModel(
 
     var reservaSeleccionada by mutableStateOf<Reserva?>(null)
         private set
+
+    /*private val _reservasHabitacion = MutableStateFlow<List<Reserva>>(emptyList())
+    val reservasHabitacion: StateFlow<List<Reserva>> = _reservasHabitacion
+
+    fun cargarReservasPorHabitacion(habitacionId: String) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.instance.obtenerReservasPorHabitacion(habitacionId)
+                _reservasHabitacion.value = response
+            } catch (e: Exception) {
+                _reservasHabitacion.value = emptyList()
+            }
+        }
+    }*/
+
+
+
+
+
+    var reservasHabitacion by mutableStateOf<List<Reserva>>(emptyList())
+         private set
+
+     fun cargarReservasPorHabitacion(habitacionId: String) {
+         viewModelScope.launch {
+             try {
+                 val response = reservaRepository.obtenerReservaPorHabitacion(habitacionId)
+                 reservasHabitacion = response
+             } catch (e: Exception) {
+                 reservasHabitacion = emptyList()
+             }
+         }
+     }
+
 
     private val _alumnoId = MutableStateFlow<String?>(null)
     val alumnoId: StateFlow<String?> = _alumnoId
@@ -100,20 +134,19 @@ class ReservasViewModel(
         reservaSeleccionada = reserva
     }
 
-    // ✅ Confirmar reserva limpio
     fun confirmarReserva(
         habitacionId: String,
         entrada: String,
         salida: String,
         estadoReserva: String
     ) {
-        val alumnoId = loginViewModel.alumnoId.value ?: return
+        //val alumnoId = loginViewModel.alumnoId.value ?: return
 
         viewModelScope.launch {
             try {
                 val reservaRequest = ReservaRequest(
                     habitacion = HabitacionId(habitacionId),
-                    alumno = UsuarioId(alumnoId),
+                    //alumno = UsuarioId(alumnoId),
                     fechaInicio = entrada,
                     fechaFin = salida,
                     estadoReserva = estadoReserva

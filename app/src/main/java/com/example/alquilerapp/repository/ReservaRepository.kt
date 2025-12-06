@@ -2,6 +2,7 @@ package com.example.alquilerapp.repository
 
 import com.example.alquilerapp.data.model.Reserva
 import com.example.alquilerapp.data.model.ReservaRequest
+import com.example.alquilerapp.data.model.ReservaResponse
 import com.example.alquilerapp.data.network.ApiService
 import com.example.alquilerapp.data.network.RetrofitClient
 import retrofit2.Response
@@ -30,7 +31,7 @@ class ReservaRepository(private val apiService: ApiService) {
      * @return la reserva creada
      */
 
-    suspend fun crearReserva(reserva: ReservaRequest): Response<Reserva> {
+    suspend fun crearReserva(reserva: ReservaRequest): Response<ReservaResponse> {
         return apiService.crearReserva(reserva)
     }
 
@@ -50,4 +51,9 @@ class ReservaRepository(private val apiService: ApiService) {
     suspend fun eliminarReserva(id: UUID?) {
         apiService.eliminarReserva(id)
     }
+
+    suspend fun obtenerReservaPorHabitacion(id: String): List<Reserva> {
+        return apiService.obtenerReservasPorHabitacion(id)
+    }
+
 }

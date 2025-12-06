@@ -12,5 +12,6 @@ data class Reserva(
     val fechaFin: String? = null,
     val habitacionId: UUID? = null,
     val alumnoId: UUID? = null,
+    val propietarioId: UUID? = null,
     val estadoReserva: String? = null
 )

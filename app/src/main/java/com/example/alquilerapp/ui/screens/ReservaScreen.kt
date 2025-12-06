@@ -33,7 +33,7 @@ import java.util.Locale
 @Composable
 fun ReservaScreen(
     //apiService: ApiService,
-    viewModel: ReservasViewModel, // 👈 ya contiene el alumnoId del login
+    viewModel: ReservasViewModel,
     idHabitacion: String?,
     onBack: () -> Unit
 ) {
