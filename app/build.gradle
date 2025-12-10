@@ -64,6 +64,7 @@ dependencies {
     implementation 'androidx.compose.runtime:runtime:1.9.5'
     implementation 'com.google.firebase:protolite-well-known-types:18.0.1'
     implementation 'androidx.compose.runtime:runtime:1.10.0'
+    implementation 'androidx.compose.foundation:foundation-layout:1.10.0'
     debugImplementation 'androidx.compose.ui:ui-tooling'
 
 

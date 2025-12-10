@@ -28,6 +28,7 @@ fun EstudianteScreen(
     onLogout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
     Column(modifier = modifier.fillMaxSize()) {
         TopAppBar(
             title = { Text("Panel del Estudiante") },
@@ -55,7 +56,9 @@ fun EstudianteScreen(
             StudentOption(
                 icon = Icons.Default.Event,
                 label = "Mis Reservas",
-                onClick = { navController.navigate("misReservas") }
+                onClick = {
+                    navController.navigate("reservasAlumno")
+                }
             )
         }
     }

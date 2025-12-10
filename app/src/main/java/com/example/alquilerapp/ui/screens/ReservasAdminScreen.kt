@@ -12,9 +12,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.alquilerapp.data.model.Reserva
+import com.example.alquilerapp.data.model.dto.ReservaDTO
 import com.example.alquilerapp.viewmodel.ReservasViewModel
-import java.util.UUID
 
 /**
  * Composable para la pantalla de gestión de reservas del administrador.
@@ -29,21 +28,29 @@ import java.util.UUID
 fun ReservasAdminScreen(
     viewModel: ReservasViewModel,
     onBack: () -> Unit,
-    onEditReserva: (Reserva) -> Unit,
-    onDeleteReserva: (Reserva) -> Unit = { reserva -> viewModel.eliminarReserva(reserva.id as UUID?) }
+    onEditReserva: (ReservaDTO) -> Unit,
+    onDeleteReserva: (ReservaDTO) -> Unit = { reserva -> viewModel.eliminarReserva(reserva.id) }
 ) {
     val reservas = viewModel.reservas
     val loading = viewModel.loading
     val error = viewModel.errorMessage
     var expanded by remember { mutableStateOf(false) }
-    var ciudadFiltro by remember { mutableStateOf("") }
-    var fechaFiltro by remember { mutableStateOf("") }
+    var alumnoIdFiltro by remember { mutableStateOf("") }
+    var habitacionIdFiltro by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
-    var reservaAEliminar by remember { mutableStateOf<Reserva?>(null) }
+    var reservaAEliminar: ReservaDTO? by remember { mutableStateOf(null) }
+
 
     LaunchedEffect(Unit) {
         viewModel.loadReservas()
     }
+
+    val reservasFiltradas = reservas.filter { reserva ->
+        (alumnoIdFiltro.isBlank() || reserva.alumnoId.toString().contains(alumnoIdFiltro)) &&
+                (habitacionIdFiltro.isBlank() || reserva.habitacionId.toString().contains(habitacionIdFiltro))
+    }
+
+
 
     Scaffold(
         topBar = {
@@ -60,16 +67,16 @@ fun ReservasAdminScreen(
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 OutlinedTextField(
-                                    value = ciudadFiltro,
-                                    onValueChange = { ciudadFiltro = it },
-                                    label = { Text("Ciudad") },
+                                    value = alumnoIdFiltro,
+                                    onValueChange = { alumnoIdFiltro = it },
+                                    label = { Text("Id Alumno") },
                                     modifier = Modifier.fillMaxWidth()
                                 )
                                 Spacer(Modifier.height(8.dp))
                                 OutlinedTextField(
-                                    value = fechaFiltro,
-                                    onValueChange = { fechaFiltro = it },
-                                    label = { Text("Fecha (YYYY-MM-DD)") },
+                                    value = habitacionIdFiltro,
+                                    onValueChange = { habitacionIdFiltro = it },
+                                    label = { Text("Id Habitación") },
                                     modifier = Modifier.fillMaxWidth()
                                 )
                                 Spacer(Modifier.height(8.dp))
@@ -78,11 +85,13 @@ fun ReservasAdminScreen(
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     TextButton(onClick = {
-                                        ciudadFiltro = ""
-                                        fechaFiltro = ""
+                                        alumnoIdFiltro = ""
+                                        habitacionIdFiltro = ""
                                         expanded = false
-                                    }) { Text("Limpiar") }
-                                    Button(onClick = { expanded = false }) { Text("Aplicar") }
+                                    }) {
+                                        Text("Limpiar") }
+                                    Button(onClick = { expanded = false }) {
+                                        Text("Aplicar") }
                                 }
                             }
                         }
@@ -107,7 +116,7 @@ fun ReservasAdminScreen(
             }
             else -> {
                 LazyColumn(contentPadding = padding, modifier = Modifier.fillMaxSize()) {
-                    items(reservas) { reserva ->
+                    items(reservasFiltradas) { reserva ->
                         var expandedCard by remember { mutableStateOf(false) }
 
                         Card(
@@ -119,7 +128,9 @@ fun ReservasAdminScreen(
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text("ID: ${reserva.id}")
                                 Text("Habitación: ${reserva.habitacionId}")
+                                Text("Propietario: ${reserva.propietarioEmail}")
                                 Text("Alumno: ${reserva.alumnoId}")
+                                Text("Estado: ${reserva.estadoReserva}")
                                 Text("Fecha de entrada: ${reserva.fechaInicio}")
                                 Text("Fecha de salida: ${reserva.fechaFin}")
 

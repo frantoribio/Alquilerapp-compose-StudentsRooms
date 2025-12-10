@@ -3,8 +3,8 @@ package com.example.alquilerapp.repository
 import com.example.alquilerapp.data.model.Reserva
 import com.example.alquilerapp.data.model.ReservaRequest
 import com.example.alquilerapp.data.model.ReservaResponse
+import com.example.alquilerapp.data.model.dto.ReservaDTO
 import com.example.alquilerapp.data.network.ApiService
-import com.example.alquilerapp.data.network.RetrofitClient
 import retrofit2.Response
 import java.util.UUID
 
@@ -15,13 +15,13 @@ import java.util.UUID
  */
 class ReservaRepository(private val apiService: ApiService) {
 
-    private val api = RetrofitClient.instance
+
 
     /**
      * obtiene las reservas de la api
      * @return las reservas de la api
      */
-    suspend fun obtenerReservas(): Response<List<Reserva>> {
+    suspend fun obtenerReservas(): Response<List<ReservaDTO>> {
         return apiService.listarReservas()
     }
 
@@ -48,12 +48,22 @@ class ReservaRepository(private val apiService: ApiService) {
      * elimina una reserva en la api
      * @param id el id de la reserva a eliminar
      */
-    suspend fun eliminarReserva(id: UUID?) {
+    suspend fun eliminarReserva(id: String) {
         apiService.eliminarReserva(id)
     }
 
-    suspend fun obtenerReservaPorHabitacion(id: String): List<Reserva> {
+    fun filtrarReservasPorAlumno(reservas: List<ReservaDTO>, alumnoId: String): List<ReservaDTO> {
+        return reservas.filter { it.alumnoId.toString() == alumnoId }
+    }
+
+
+
+    suspend fun obtenerReservaPorHabitacion(id: String): List<ReservaDTO> {
         return apiService.obtenerReservasPorHabitacion(id)
+    }
+
+    suspend fun obtenerReservaPorAlumno(id: String): List<ReservaDTO> {
+        return apiService.obtenerReservasPorAlumno(id)
     }
 
 }

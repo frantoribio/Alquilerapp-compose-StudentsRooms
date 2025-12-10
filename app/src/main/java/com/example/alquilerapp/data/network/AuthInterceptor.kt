@@ -25,7 +25,10 @@ class AuthInterceptor(private val tokenProvider: () -> String?) : Interceptor {
             chain.request()
         }
         Log.d("AuthInterceptor", "Token enviado: $token")
+        Log.d("AuthInterceptor", "Request URL: ${request.url}")
+        Log.d("AuthInterceptor", "Request Body: ${request.body}")
         Log.d("AuthInterceptor", "Request con Authorization: ${request.headers["Authorization"]}")
+
 
         return chain.proceed(request)
     }

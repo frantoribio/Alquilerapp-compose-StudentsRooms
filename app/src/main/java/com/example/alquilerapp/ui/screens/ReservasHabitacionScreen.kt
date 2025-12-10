@@ -21,12 +21,8 @@ fun ReservasHabitacionScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
-    // Observar el flujo de reservas
-
     var reservas = viewModel.reservasHabitacion
 
-
-    // Lanzar la carga al entrar en pantalla
     LaunchedEffect(habitacionId) {
         viewModel.cargarReservasPorHabitacion(habitacionId)
     }
@@ -65,6 +61,8 @@ fun ReservasHabitacionScreen(
                             Text("Entrada: ${reserva.fechaInicio}")
                             Text("Salida: ${reserva.fechaFin}")
                             Text("Estado: ${reserva.estadoReserva}")
+                            Text("Alumno ID: ${reserva.alumnoId}")
+                            Text("Alumno Email: ${reserva.alumnoEmail}")
                         }
                     }
                 }

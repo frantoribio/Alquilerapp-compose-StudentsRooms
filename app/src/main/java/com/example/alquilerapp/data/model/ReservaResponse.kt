@@ -6,7 +6,6 @@ package com.example.alquilerapp.data.model
  */
 data class ReservaResponse (
     val id: String,
-    val habitacion: Habitacion,
     val fechaInicio: String,
     val fechaFin: String,
     val estadoReserva: String

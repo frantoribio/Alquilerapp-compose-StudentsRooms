@@ -52,7 +52,6 @@ class MainActivity : ComponentActivity() {
                 Surface {
                     val context = LocalContext.current
                     val tokenStore = remember { TokenStore(context) }
-
                     val apiService = remember { ApiServiceBuilder.create(tokenStore) }
                     val alquilerRepository = remember { AlquilerRepository(apiService) }
                     val viewModel: HabitacionesViewModel = viewModel(
@@ -203,10 +202,10 @@ class MainActivity : ComponentActivity() {
                         composable("reservaConfirmada/{idHabitacion}") { backStackEntry ->
                             val idHabitacion = backStackEntry.arguments?.getString("idHabitacion")
                             ReservaScreen(
-                                //apiService = apiService,
                                 viewModel = reservaVM,
                                 idHabitacion = idHabitacion,
-                                onBack = { navController.popBackStack() }
+                                onBack = { navController.popBackStack() },
+                                navController = navController
                             )
                         }
 
@@ -285,17 +284,15 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
-                        composable("misReservas") {
-                            Scaffold(bottomBar = { BottomBar(navController) }) { padding ->
-                                EstudianteResrvasScreen(
-                                    viewModel = reservaVM,
-                                    navController = navController,
-                                    modifier = Modifier.padding(padding),
-                                    onBack = { navController.popBackStack() }
-
+                        composable("reservasAlumno") { backStackEntry ->
+                            val alumnoId = backStackEntry.arguments?.getString("alumnoId") ?: ""
+                            EstudianteReservasScreen(
+                                alumnoId = alumnoId,
+                                viewModel = reservaVM,
+                                navController = navController,
                                 )
                             }
-                        }
+
 
                         composable("reservasHabitacion/{habitacionId}") { backStackEntry ->
                             val habitacionId = backStackEntry.arguments?.getString("habitacionId") ?: ""
@@ -303,6 +300,18 @@ class MainActivity : ComponentActivity() {
                                 habitacionId = habitacionId,
                                 viewModel = reservaVM,
                                 navController = navController
+                            )
+                        }
+
+                        composable("editar_reserva/{id}") { backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("id") ?: ""
+                            EditarReservaScreen(
+                                reservasViewModel = reservaVM,
+                                navController = navController,
+                                id = id,
+                                modifier = Modifier,
+                                context = context,
+                                onNavigateBack = { navController.popBackStack() }
                             )
                         }
                     }

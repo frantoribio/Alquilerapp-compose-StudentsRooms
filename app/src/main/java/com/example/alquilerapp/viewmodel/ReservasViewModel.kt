@@ -1,16 +1,16 @@
 package com.example.alquilerapp.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.alquilerapp.data.model.HabitacionId
 import com.example.alquilerapp.data.model.Reserva
 import com.example.alquilerapp.data.model.ReservaRequest
-import com.example.alquilerapp.data.model.UsuarioId
-import com.example.alquilerapp.data.network.RetrofitClient
+import com.example.alquilerapp.data.model.dto.ReservaDTO
+import com.example.alquilerapp.repository.LoginRepository
 import com.example.alquilerapp.repository.ReservaRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,8 +36,14 @@ class ReservasViewModel(
     private val loginViewModel: LoginViewModel
 ) : ViewModel() {
 
-    var reservas by mutableStateOf<List<Reserva>>(emptyList())
+    private val repo = LoginRepository()
+
+    var reservas by mutableStateOf<List<ReservaDTO>>(emptyList())
         private set
+
+    private val _reservass = MutableStateFlow<List<ReservaDTO>>(emptyList())
+    val reservass: StateFlow<List<ReservaDTO>> = _reservass
+
 
     var loading by mutableStateOf(false)
         private set
@@ -45,47 +51,55 @@ class ReservasViewModel(
     var errorMessage by mutableStateOf<String?>(null)
         private set
 
-    var reservaSeleccionada by mutableStateOf<Reserva?>(null)
+    /*var reservaSeleccionada by mutableStateOf<ReservaDTO?>(null)
+        private set*/
+
+    var reservasAlumno: List<ReservaDTO> by mutableStateOf<List<ReservaDTO>>(emptyList())
         private set
 
-    /*private val _reservasHabitacion = MutableStateFlow<List<Reserva>>(emptyList())
-    val reservasHabitacion: StateFlow<List<Reserva>> = _reservasHabitacion
+    var reservasHabitacion by mutableStateOf<List<ReservaDTO>>(emptyList())
+        private set
 
-    fun cargarReservasPorHabitacion(habitacionId: String) {
+    private val _reservasAlumnos = MutableStateFlow<List<ReservaDTO>>(emptyList())
+    var reservasAlumnos: StateFlow<List<ReservaDTO>> = _reservasAlumnos
+
+    private val _reservaSeleccionada = MutableStateFlow<ReservaDTO?>(null)
+    val reservaSeleccionada: StateFlow<ReservaDTO?> = _reservaSeleccionada
+
+   /* fun cargaReservasPorAlumno(alumnoId: String) {
         viewModelScope.launch {
             try {
-                val response = RetrofitClient.instance.obtenerReservasPorHabitacion(habitacionId)
-                _reservasHabitacion.value = response
+                val reservas = reservaRepository.obtenerReservaPorAlumno(alumnoId)
+                _reservasAlumnos.value = reservas
             } catch (e: Exception) {
-                _reservasHabitacion.value = emptyList()
+                Log.e("ReservasViewModel", "Error cargando reservas", e)
             }
         }
     }*/
 
 
 
+    fun cargarReservasPorHabitacion(habitacionId: String) {
+        viewModelScope.launch {
+            try {
+                val response = reservaRepository.obtenerReservaPorHabitacion(habitacionId)
+                reservasHabitacion = response
+            } catch (e: Exception) {
+                reservasHabitacion = emptyList()
+            }
+        }
+    }
 
+    fun cargarReservasPorAlumno(alumnoId: String) {
+        viewModelScope.launch {
+            try {
+                val response = reservaRepository.obtenerReservaPorAlumno(alumnoId)
+                reservasAlumno = response
+            } catch (e: Exception) {
+                reservasAlumno = emptyList()
 
-    var reservasHabitacion by mutableStateOf<List<Reserva>>(emptyList())
-         private set
-
-     fun cargarReservasPorHabitacion(habitacionId: String) {
-         viewModelScope.launch {
-             try {
-                 val response = reservaRepository.obtenerReservaPorHabitacion(habitacionId)
-                 reservasHabitacion = response
-             } catch (e: Exception) {
-                 reservasHabitacion = emptyList()
-             }
-         }
-     }
-
-
-    private val _alumnoId = MutableStateFlow<String?>(null)
-    val alumnoId: StateFlow<String?> = _alumnoId
-
-    fun setAlumnoId(id: String) {
-        _alumnoId.value = id
+            }
+        }
     }
 
     fun loadReservas() {
@@ -107,8 +121,29 @@ class ReservasViewModel(
             }
         }
     }
+    fun obtenerReservaPorId(id: String): ReservaDTO? {
+        return reservass.value.find { it.id == id }
+    }
 
-    fun eliminarReserva(id: UUID?) {
+    fun cargarReserva(id: String) {
+        viewModelScope.launch {
+            val reserva = obtenerReservaPorId(id)
+            _reservaSeleccionada.value = reserva
+        }
+
+    }
+
+
+    /*fun obtenerReservasDeAlumno(alumnoId: String): List<ReservaDTO> {
+        return reservaRepository.filtrarReservasPorAlumno(
+            reservas.filter { it.alumnoId.toString() == alumnoId }, alumnoId
+        )
+    }*/
+
+
+
+
+    fun eliminarReserva(id: String) {
         viewModelScope.launch {
             try {
                 reservaRepository.eliminarReserva(id)
@@ -130,23 +165,17 @@ class ReservasViewModel(
         }
     }
 
-    fun seleccionarReserva(reserva: Reserva) {
-        reservaSeleccionada = reserva
-    }
-
     fun confirmarReserva(
         habitacionId: String,
         entrada: String,
         salida: String,
         estadoReserva: String
     ) {
-        //val alumnoId = loginViewModel.alumnoId.value ?: return
-
         viewModelScope.launch {
             try {
                 val reservaRequest = ReservaRequest(
                     habitacion = HabitacionId(habitacionId),
-                    //alumno = UsuarioId(alumnoId),
+                    //alumno = UsuarioId(loginViewModel.alumnoId),
                     fechaInicio = entrada,
                     fechaFin = salida,
                     estadoReserva = estadoReserva
@@ -165,28 +194,10 @@ class ReservasViewModel(
                     errorMessage = "Error al confirmar reserva: ${response.code()}"
                 }
 
-
             } catch (e: Exception) {
                 errorMessage = "Error al confirmar reserva: ${e.message}"
             }
         }
     }
-
-   /* fun getReservasByHabitacion(habitacionId: String): List<Reserva> {
-        var reservas = reservas
-        if (reservas.isEmpty()) {
-            reservas = loadReservas().toMutableList()
-        }
-
-        return reservas.filter {
-            it.habitacion.id.toString() == habitacionId
-        }
-    }
-
-    fun getReservasByAlumno(alumnoId: String): List<Reserva> {
-        return reservas.filter {
-            it.alumno.id.toString() == alumnoId
-        }
-    }*/
 }
 

@@ -179,7 +179,8 @@ fun AppNavHost(
                 //apiService = ApiServiceBuilder.create(tokenStore),
                 viewModel = viewModel(),
                 idHabitacion = idHabitacion,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                navController = navController
             )
         }
 

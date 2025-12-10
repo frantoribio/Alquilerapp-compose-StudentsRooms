@@ -11,6 +11,7 @@ import com.example.alquilerapp.data.model.ReservaResponse
 import com.example.alquilerapp.data.model.UploadResponse
 import com.example.alquilerapp.data.model.Usuario
 import com.example.alquilerapp.data.model.dto.CrearHabitacionDto
+import com.example.alquilerapp.data.model.dto.ReservaDTO
 import okhttp3.MultipartBody
 
 import retrofit2.Response
@@ -160,7 +161,7 @@ interface ApiService {
      * @return Una lista de reservas.
      */
     @GET("reservas")
-    suspend fun listarReservas(): Response<List<Reserva>>
+    suspend fun listarReservas(): Response<List<ReservaDTO>>
 
     /**
      * Crea una nueva reserva.
@@ -179,7 +180,7 @@ interface ApiService {
      * @return Una respuesta que contiene la reserva actualizada.
      */
     @PUT("reservas/{id}")
-    suspend fun actualizarReserva(@Path("id") id: UUID, @Body reserva: Reserva): Response<Reserva>
+    suspend fun actualizarReserva(@Path("id") id: UUID, @Body reserva: Reserva): Response<ReservaDTO>
 
     /**
      * Elimina una reserva.
@@ -187,11 +188,13 @@ interface ApiService {
      * @param id El identificador único de la reserva a eliminar.
      */
     @DELETE("reservas/{id}")
-    suspend fun eliminarReserva(@Path("id") id: UUID?)
+    suspend fun eliminarReserva(@Path("id") id:String)
 
     @GET("reservas/habitacion/{id}")
     suspend fun obtenerReservasPorHabitacion(
-        @Path("id") habitacionId: String): List<Reserva>
+        @Path("id") habitacionId: String): List<ReservaDTO>
 
+    @GET("reservas/usuario/{id}")
+    suspend fun obtenerReservasPorAlumno(
+        @Path("id") usuarioId: String): List<ReservaDTO>
 }
-
