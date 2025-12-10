@@ -128,7 +128,6 @@ fun ReservasAdminScreen(
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text("ID: ${reserva.id}")
                                 Text("Habitación: ${reserva.habitacionId}")
-                                Text("Propietario: ${reserva.propietarioEmail}")
                                 Text("Alumno: ${reserva.alumnoId}")
                                 Text("Estado: ${reserva.estadoReserva}")
                                 Text("Fecha de entrada: ${reserva.fechaInicio}")

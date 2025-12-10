@@ -48,7 +48,7 @@ fun EditarHabitacionScreen(
     }
 
     LaunchedEffect(habitacion) {
-        //val habitacion = habitacionesViewModel.obtenerHabitacionPorId(id!!)
+        val habitacion = habitacionesViewModel.obtenerHabitacionPorId(id!!)
         habitacion?.let {
             titulo = it.titulo
             ciudad = it.ciudad

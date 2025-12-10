@@ -180,7 +180,8 @@ fun AppNavHost(
                 viewModel = viewModel(),
                 idHabitacion = idHabitacion,
                 onBack = { navController.popBackStack() },
-                navController = navController
+                navController = navController,
+                loginViewModel = loginVM
             )
         }
 

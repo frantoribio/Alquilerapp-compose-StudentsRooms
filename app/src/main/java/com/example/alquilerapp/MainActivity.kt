@@ -205,7 +205,8 @@ class MainActivity : ComponentActivity() {
                                 viewModel = reservaVM,
                                 idHabitacion = idHabitacion,
                                 onBack = { navController.popBackStack() },
-                                navController = navController
+                                navController = navController,
+                                loginViewModel = loginVM
                             )
                         }
 
@@ -278,13 +279,14 @@ class MainActivity : ComponentActivity() {
                             Scaffold(bottomBar = { BottomBar(navController) }) { padding ->
                                 EstudianteScreen(
                                     navController = navController,
+                                    loginViewModel = loginVM,
                                     onLogout = onLogout,
                                     modifier = Modifier.padding(padding)
                                 )
                             }
                         }
 
-                        composable("reservasAlumno") { backStackEntry ->
+                        composable("reservasAlumno/{alumnoId}") { backStackEntry ->
                             val alumnoId = backStackEntry.arguments?.getString("alumnoId") ?: ""
                             EstudianteReservasScreen(
                                 alumnoId = alumnoId,

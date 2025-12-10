@@ -8,11 +8,14 @@ import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Hotel
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.alquilerapp.viewmodel.LoginViewModel
 
 /**
  * Composable para la pantalla del estudiante.
@@ -25,9 +28,11 @@ import androidx.navigation.NavController
 @Composable
 fun EstudianteScreen(
     navController: NavController,
+    loginViewModel: LoginViewModel,
     onLogout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val alumnoId by loginViewModel.alumnoId.collectAsState()
 
     Column(modifier = modifier.fillMaxSize()) {
         TopAppBar(
@@ -57,7 +62,7 @@ fun EstudianteScreen(
                 icon = Icons.Default.Event,
                 label = "Mis Reservas",
                 onClick = {
-                    navController.navigate("reservasAlumno")
+                    navController.navigate("reservasAlumno/${alumnoId}")
                 }
             )
         }

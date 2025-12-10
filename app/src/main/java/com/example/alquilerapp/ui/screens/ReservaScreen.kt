@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.alquilerapp.data.network.ApiService
+import com.example.alquilerapp.viewmodel.LoginViewModel
 import com.example.alquilerapp.viewmodel.ReservasViewModel
 //import com.example.alquilerapp.data.network.RetrofitClientReserva
 //import com.example.alquilerapp.repository.ReservaRepository
@@ -38,7 +39,9 @@ fun ReservaScreen(
     idHabitacion: String?,
     onBack: () -> Unit,
     navController: NavController,
+    loginViewModel: LoginViewModel
 ) {
+    val alumnoId by loginViewModel.alumnoId.collectAsState()
     val todayMillis = Instant.now().toEpochMilli()
     val datePickerState = rememberDatePickerState(
         selectableDates = object : SelectableDates {
@@ -137,7 +140,7 @@ fun ReservaScreen(
                                     estadoReserva = "PENDIENTE"
                                 )
 
-                                navController.navigate("reservasAlumno")
+                                navController.navigate("reservasAlumno/$alumnoId")
 
                             }
                         }) {
